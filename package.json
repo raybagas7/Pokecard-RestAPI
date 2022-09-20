@@ -1,0 +1,24 @@
+{
+  "name": "poke-card",
+  "version": "1.0.0",
+  "description": "our pokemon backend API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DAG",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/hapi": "^20.2.2",
+    "@hapi/jwt": "^3.0.0",
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.2",
+    "joi": "^17.6.0",
+    "nanoid": "^3.3.4",
+    "node-pg-migrate": "^6.2.2",
+    "pg": "^8.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
