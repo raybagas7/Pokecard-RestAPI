@@ -9,8 +9,14 @@ const UsersService = require('./services/postgrest/UsersService');
 const UsersValidator = require('./validator/users');
 const ClientError = require('./exceptions/ClientError');
 
+const authentications = require('./api/authentications');
+const AuthenticationsService = require('./services/postgrest/AuthenticationsService');
+const TokenManager = require('./tokenize/TokenManager');
+const AuthenticationsValidator = require('./validator/authentications');
+
 const init = async () => {
-  const userService = new UsersService();
+  const usersService = new UsersService();
+  const authenticationsService = new AuthenticationsService();
 
   const server = Hapi.server({
     port: config.app.port,
@@ -29,13 +35,41 @@ const init = async () => {
     },
   ]);
 
-  await server.register({
-    plugin: users,
-    options: {
-      service: userService,
-      validator: UsersValidator,
+  // Authentications Strategy
+  server.auth.strategy('poke-card_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
     },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decode.payload.id,
+      },
+    }),
   });
+
+  await server.register([
+    {
+      plugin: users,
+      options: {
+        service: usersService,
+        validator: UsersValidator,
+      },
+    },
+    {
+      plugin: authentications,
+      options: {
+        authenticationsService,
+        usersService,
+        tokenManager: TokenManager,
+        validator: AuthenticationsValidator,
+      },
+    },
+  ]);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
