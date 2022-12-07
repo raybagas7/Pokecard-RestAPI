@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 
 exports.up = (pgm) => {
-  pgm.createTable('credit', {
+  pgm.createTable('credits', {
     credit_id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
@@ -24,10 +24,12 @@ exports.up = (pgm) => {
     },
     owner: {
       type: 'VARCHAR(50)',
+      unique: true,
+      notNull: true,
     },
   });
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('credit');
+  pgm.dropTable('credits');
 };

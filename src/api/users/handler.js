@@ -1,4 +1,3 @@
-const { response } = require('@hapi/hapi/lib/validation');
 const autoBind = require('auto-bind');
 
 class UsersHandler {

@@ -13,10 +13,14 @@ const authentications = require('./api/authentications');
 const AuthenticationsService = require('./services/postgrest/AuthenticationsService');
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
+const credits = require('./api/credits');
+const CreditsService = require('./services/postgrest/CreditsService');
+const CreditsValidator = require('./validator/credits');
 
 const init = async () => {
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const creditsService = new CreditsService();
 
   const server = Hapi.server({
     port: config.app.port,
@@ -36,7 +40,7 @@ const init = async () => {
   ]);
 
   // Authentications Strategy
-  server.auth.strategy('poke-card_jwt', 'jwt', {
+  server.auth.strategy('pokecard_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
       aud: false,
@@ -47,7 +51,7 @@ const init = async () => {
     validate: (artifacts) => ({
       isValid: true,
       credentials: {
-        id: artifacts.decode.payload.id,
+        id: artifacts.decoded.payload.id,
       },
     }),
   });
@@ -67,6 +71,13 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
+      },
+    },
+    {
+      plugin: credits,
+      options: {
+        service: creditsService,
+        validator: CreditsValidator,
       },
     },
   ]);
