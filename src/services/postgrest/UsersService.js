@@ -25,15 +25,21 @@ class UsersService {
     }
   }
 
-  async addUser({ username, password, trainer_name, profile_img = undefined }) {
+  async addUser({
+    username,
+    password,
+    trainer_name,
+    profile_img = undefined,
+    email,
+  }) {
     await this.verifyNewUsername(username);
 
     const id = `poke-${nanoid(16)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = {
-      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5) RETURNING id',
-      values: [id, username, hashedPassword, trainer_name, profile_img],
+      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+      values: [id, username, hashedPassword, trainer_name, profile_img, email],
     };
 
     const result = await this._pool.query(query);

@@ -7,4 +7,16 @@ const PutPokeBallSchema = Joi.object({
   creditId: Joi.string().required(),
 });
 
-module.exports = PutPokeBallSchema;
+const PutPokemonShuffleWithCoinSchema = Joi.object({
+  creditId: Joi.string().required(),
+});
+
+const PutCreditCoinSchema = Joi.object({
+  creditId: Joi.string().required(),
+});
+
+module.exports = {
+  PutPokeBallSchema,
+  PutPokemonShuffleWithCoinSchema,
+  PutCreditCoinSchema,
+};

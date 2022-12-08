@@ -72,6 +72,62 @@ class CreditsService {
 
     return result.rows;
   }
+
+  async checkMinimumCoinAvailability(creditId, owner) {
+    const query = {
+      text: 'SELECT coin FROM credits WHERE credit_id = $1 AND owner = $2',
+      values: [creditId, owner],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rows[0].coin < 100) {
+      throw new InvariantError('Your coin is low');
+    }
+  }
+
+  async shufflePokemonWithCoin(creditId, owner) {
+    await this.verifyCreditId(creditId);
+    await this.checkMinimumCoinAvailability(creditId, owner);
+
+    const query = {
+      text: `UPDATE credits
+      SET coin = coin - 100
+      WHERE credit_id = $1
+      AND owner = $2
+      RETURNING credit_id, coin`,
+      values: [creditId, owner],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('Failed to shuffle pokemon with coin');
+    }
+
+    return result.rows;
+  }
+
+  async increaseCreditCoin(creditId, owner) {
+    await this.verifyCreditId(creditId);
+
+    const query = {
+      text: `UPDATE credits
+      SET coin = coin + 500
+      WHERE credit_id = $1
+      AND owner = $2
+      RETURNING credit_id, coin`,
+      values: [creditId, owner],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('Failed to add coin');
+    }
+
+    return result.rows;
+  }
 }
 
 module.exports = CreditsService;
