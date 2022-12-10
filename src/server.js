@@ -16,11 +16,15 @@ const AuthenticationsValidator = require('./validator/authentications');
 const credits = require('./api/credits');
 const CreditsService = require('./services/postgrest/CreditsService');
 const CreditsValidator = require('./validator/credits');
+const CardsService = require('./services/postgrest/CardsService');
+const cards = require('./api/cards');
+const CardsValidator = require('./validator/cards');
 
 const init = async () => {
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
   const creditsService = new CreditsService();
+  const cardsService = new CardsService();
 
   const server = Hapi.server({
     port: config.app.port,
@@ -78,6 +82,13 @@ const init = async () => {
       options: {
         service: creditsService,
         validator: CreditsValidator,
+      },
+    },
+    {
+      plugin: cards,
+      options: {
+        service: cardsService,
+        validator: CardsValidator,
       },
     },
   ]);

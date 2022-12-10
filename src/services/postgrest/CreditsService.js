@@ -1,5 +1,6 @@
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
+const AuthorizationError = require('../../exceptions/AuthorizationError');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
@@ -25,7 +26,7 @@ class CreditsService {
     return result.rows[0].credit_id;
   }
 
-  async verifyCreditId(creditId) {
+  async verifyCreditIdAndOwner(creditId, owner) {
     const query = {
       text: 'SELECT * FROM credits WHERE credit_id = $1',
       values: [creditId],
@@ -36,6 +37,12 @@ class CreditsService {
     if (!result.rowCount) {
       throw new NotFoundError('Credit not exist');
     }
+
+    const credit = result.rows[0];
+
+    if (credit.owner !== owner) {
+      throw new AuthorizationError("You can't access this credit");
+    }
   }
 
   async reducePokeBall(
@@ -45,7 +52,7 @@ class CreditsService {
     creditId,
     ownerId
   ) {
-    await this.verifyCreditId(creditId);
+    await this.verifyCreditIdAndOwner(creditId, ownerId);
 
     const query = {
       text: `UPDATE credits 
@@ -87,7 +94,7 @@ class CreditsService {
   }
 
   async shufflePokemonWithCoin(creditId, owner) {
-    await this.verifyCreditId(creditId);
+    await this.verifyCreditIdAndOwner(creditId, owner);
     await this.checkMinimumCoinAvailability(creditId, owner);
 
     const query = {
@@ -109,7 +116,7 @@ class CreditsService {
   }
 
   async increaseCreditCoin(creditId, owner) {
-    await this.verifyCreditId(creditId);
+    await this.verifyCreditIdAndOwner(creditId, owner);
 
     const query = {
       text: `UPDATE credits
@@ -124,6 +131,21 @@ class CreditsService {
 
     if (!result.rowCount) {
       throw new InvariantError('Failed to add coin');
+    }
+
+    return result.rows;
+  }
+
+  async getCreditByOwnerId(ownerId) {
+    const query = {
+      text: 'SELECT * FROM credits WHERE owner = $1',
+      values: [ownerId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('Credit never exist');
     }
 
     return result.rows;
