@@ -52,6 +52,22 @@ class CardsService {
 
     return result.rows;
   }
+
+  async getCardByElement(elementType, ownerId) {
+    const result = await this._pool.query(
+      `SELECT * FROM cards 
+      WHERE types::jsonb @> '[{"name":"${elementType}"}]'::jsonb
+      AND owner = '${ownerId}'`
+    );
+
+    if (!result.rowCount) {
+      throw new NotFoundError(
+        "You don't have any pokemon cards with this element type"
+      );
+    }
+
+    return result.rows;
+  }
 }
 
 module.exports = CardsService;

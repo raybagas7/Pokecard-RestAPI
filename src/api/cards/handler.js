@@ -39,6 +39,21 @@ class CardsHandler {
       },
     };
   }
+
+  async getCardByElementTypeHandler(request) {
+    const { elementType } = request.params;
+    const { id: ownerId } = request.auth.credentials;
+
+    const cards = await this._service.getCardByElement(elementType, ownerId);
+
+    return {
+      status: 'success',
+      message: `Card with element ${elementType} type`,
+      data: {
+        cards,
+      },
+    };
+  }
 }
 
 module.exports = CardsHandler;

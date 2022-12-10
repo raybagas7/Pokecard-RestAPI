@@ -15,6 +15,14 @@ const routes = (handler) => [
       auth: 'pokecard_jwt',
     },
   },
+  {
+    method: 'GET',
+    path: '/cards/{elementType}',
+    handler: handler.getCardByElementTypeHandler,
+    options: {
+      auth: 'pokecard_jwt',
+    },
+  },
 ];
 
 module.exports = routes;
