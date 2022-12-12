@@ -6,8 +6,11 @@ const routes = (handler) => [
   },
   {
     method: 'GET',
-    path: '/users/{id}',
+    path: '/users/me',
     handler: handler.getUserByIdHandler,
+    options: {
+      auth: 'pokecard_jwt',
+    },
   },
 ];
 

@@ -53,7 +53,7 @@ class UsersService {
 
   async getUserById(userId) {
     const query = {
-      text: 'SELECT id, username, trainer_name FROM users WHERE id = $1',
+      text: 'SELECT id, username, trainer_name, email FROM users WHERE id = $1',
       values: [userId],
     };
 
