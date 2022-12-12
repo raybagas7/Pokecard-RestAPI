@@ -19,7 +19,7 @@ class UsersHandler {
       email,
     });
     const response = h.response({
-      status: 'succes',
+      status: 'success',
       message: 'New user has been made',
       data: {
         userId,
