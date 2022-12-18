@@ -13,7 +13,7 @@ class CardsService {
     const cardsArray = [];
     cardsData.map((card) =>
       cardsArray.push([
-        `card-${nanoid(16)}`,
+        `card-${card.id}`,
         card.poke_id,
         card.name,
         card.attribute,

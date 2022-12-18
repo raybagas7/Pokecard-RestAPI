@@ -87,7 +87,8 @@ const init = async () => {
     {
       plugin: cards,
       options: {
-        service: cardsService,
+        creditsService,
+        cardsService,
         validator: CardsValidator,
       },
     },

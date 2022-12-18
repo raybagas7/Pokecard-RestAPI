@@ -53,6 +53,12 @@ class CreditsService {
     ownerId
   ) {
     await this.verifyCreditIdAndOwner(creditId, ownerId);
+    await this.verifyBallAvailability(
+      pokeball_amount,
+      ultraball_amount,
+      masterball_amount,
+      creditId
+    );
 
     const query = {
       text: `UPDATE credits 
@@ -77,7 +83,35 @@ class CreditsService {
       throw new InvariantError('Failed to update poke_ball');
     }
 
-    return result.rows;
+    return result.rows[0];
+  }
+
+  async verifyBallAvailability(
+    pokeball_amount = 0,
+    ultraball_amount = 0,
+    masterball_amount = 0,
+    creditId
+  ) {
+    const query = {
+      text: `SELECT poke_ball, ultra_ball, master_ball
+      FROM credits
+      WHERE credit_id = $1`,
+      values: [creditId],
+    };
+
+    const result = await this._pool.query(query);
+
+    const credit = result.rows[0];
+
+    if (
+      pokeball_amount > credit.poke_ball ||
+      ultraball_amount > credit.ultra_ball ||
+      masterball_amount > credit.master_ball
+    ) {
+      throw new InvariantError(
+        'Failed to pick pokemon because the amount of the the ball you have is less than the request ball'
+      );
+    }
   }
 
   async checkMinimumCoinAvailability(creditId, owner) {
@@ -112,7 +146,7 @@ class CreditsService {
       throw new InvariantError('Failed to shuffle pokemon with coin');
     }
 
-    return result.rows;
+    return result.rows[0];
   }
 
   async increaseCreditCoin(creditId, owner) {
@@ -133,7 +167,7 @@ class CreditsService {
       throw new InvariantError('Failed to add coin');
     }
 
-    return result.rows;
+    return result.rows[0];
   }
 
   async getCreditByOwnerId(ownerId) {
@@ -148,7 +182,7 @@ class CreditsService {
       throw new InvariantError('Credit never exist');
     }
 
-    return result.rows;
+    return result.rows[0];
   }
 }
 

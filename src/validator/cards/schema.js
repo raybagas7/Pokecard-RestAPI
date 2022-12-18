@@ -1,8 +1,13 @@
 const Joi = require('joi');
 
 const AddCardByOwnerSchema = Joi.object({
+  pokeball_amount: Joi.number().integer().min(0).required(),
+  ultraball_amount: Joi.number().integer().min(0).required(),
+  masterball_amount: Joi.number().integer().min(0).required(),
+  creditId: Joi.string().min(23).max(23).required(),
   cardsData: Joi.array()
     .items({
+      id: Joi.string().min(16).max(16).required(),
       poke_id: Joi.number().integer().required(),
       name: Joi.string().required(),
       attribute: Joi.string().valid('normal', 'shiny').required(),

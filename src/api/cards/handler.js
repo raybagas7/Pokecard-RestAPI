@@ -1,7 +1,8 @@
 const autoBind = require('auto-bind');
 class CardsHandler {
-  constructor(service, validator) {
-    this._service = service;
+  constructor(creditsService, cardsService, validator) {
+    this._cardsService = cardsService;
+    this._creditsService = creditsService;
     this._validator = validator;
 
     autoBind(this);
@@ -9,15 +10,30 @@ class CardsHandler {
 
   async postCardByOwnerHandler(request, h) {
     this._validator.validateAddCardByOwnerPayload(request.payload);
-    const { cardsData } = request.payload;
+    const {
+      pokeball_amount,
+      ultraball_amount,
+      masterball_amount,
+      creditId,
+      cardsData,
+    } = request.payload;
+
     const { id: ownerId } = request.auth.credentials;
 
-    const cardsId = await this._service.addCardByOwner(cardsData, ownerId);
+    const balls = await this._creditsService.reducePokeBall(
+      pokeball_amount,
+      ultraball_amount,
+      masterball_amount,
+      creditId,
+      ownerId
+    );
+    const cardsId = await this._cardsService.addCardByOwner(cardsData, ownerId);
 
     const response = h.response({
       status: 'success',
       message: 'Card Added',
       data: {
+        balls,
         cardsId,
       },
     });
@@ -29,7 +45,7 @@ class CardsHandler {
   async getCardByOwnerHandler(request) {
     const { id: ownerId } = request.auth.credentials;
 
-    const cards = await this._service.getCardByOwner(ownerId);
+    const cards = await this._cardsService.getCardByOwner(ownerId);
 
     return {
       status: 'success',
@@ -44,7 +60,10 @@ class CardsHandler {
     const { elementType } = request.params;
     const { id: ownerId } = request.auth.credentials;
 
-    const cards = await this._service.getCardByElement(elementType, ownerId);
+    const cards = await this._cardsService.getCardByElement(
+      elementType,
+      ownerId
+    );
 
     return {
       status: 'success',
