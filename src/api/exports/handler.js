@@ -15,11 +15,15 @@ class ExportsHandler {
     const { id: credentialId } = request.auth.credentials;
     const { targetEmail } = request.payload;
 
-    await this._usersService.verifyEmailAvailability(credentialId, targetEmail);
+    const trainer_name = await this._usersService.verifyEmailAvailability(
+      credentialId,
+      targetEmail
+    );
 
     const message = {
       userId: credentialId,
       targetEmail,
+      trainer_name,
     };
 
     await this._producerService.sendMessage(
@@ -29,7 +33,7 @@ class ExportsHandler {
 
     const response = h.response({
       status: 'success',
-      message: 'Permintaan Anda sedang kami proses',
+      message: 'Your request has been queued and will be process',
     });
 
     response.code(201);

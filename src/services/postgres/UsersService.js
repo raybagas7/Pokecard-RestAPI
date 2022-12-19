@@ -93,7 +93,7 @@ class UsersService {
 
   async verifyEmailAvailability(userId, userEmail) {
     const query = {
-      text: 'SELECT username, trainer_name, email FROM users WHERE id = $1 AND email = $2',
+      text: 'SELECT trainer_name, email FROM users WHERE id = $1 AND email = $2',
       values: [userId, userEmail],
     };
 
@@ -102,6 +102,17 @@ class UsersService {
     if (!result.rowCount) {
       throw new NotFoundError('Email not found');
     }
+
+    return result.rows[0].trainer_name;
+  }
+
+  async validatingUser(userId) {
+    const query = {
+      text: 'UPDATE users SET is_valid = true WHERE id = $1',
+      values: [userId],
+    };
+
+    await this._pool.query(query);
   }
 }
 

@@ -3,8 +3,33 @@ const { Pool } = require('pg');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class VerificationsService {
-  constructor() {
+  constructor(usersService) {
     this._pool = new Pool();
+    this._usersService = usersService;
+  }
+
+  async deleteVerificationToken(userId, token) {
+    await this.checkVerificationEmailAvailability(userId);
+
+    const query = {
+      text: 'DELETE FROM verifications WHERE owner = $1 AND token = $2',
+      values: [userId, token],
+    };
+
+    await this._pool.query(query);
+    await this._usersService.validatingUser(userId);
+  }
+
+  async checkVerificationEmailAvailability(userId) {
+    const query = {
+      text: 'SELECT * FROM verifications WHERE owner = $1',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new NotFoundError('Verifications not found');
+    }
   }
 
   async checkEmailAvailability(userId) {
