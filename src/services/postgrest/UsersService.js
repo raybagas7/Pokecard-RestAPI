@@ -90,6 +90,19 @@ class UsersService {
 
     return id;
   }
+
+  async verifyEmailAvailability(userId, userEmail) {
+    const query = {
+      text: 'SELECT username, trainer_name, email FROM users WHERE id = $1 AND email = $2',
+      values: [userId, userEmail],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Email not found');
+    }
+  }
 }
 
 module.exports = UsersService;

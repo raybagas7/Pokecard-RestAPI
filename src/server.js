@@ -19,6 +19,9 @@ const CreditsValidator = require('./validator/credits');
 const CardsService = require('./services/postgrest/CardsService');
 const cards = require('./api/cards');
 const CardsValidator = require('./validator/cards');
+const _exports = require('./api/exports');
+const ProducerService = require('./services/rabbitmq/ProducerService');
+const ExportsValidator = require('./validator/exports');
 
 const init = async () => {
   const usersService = new UsersService();
@@ -90,6 +93,14 @@ const init = async () => {
         creditsService,
         cardsService,
         validator: CardsValidator,
+      },
+    },
+    {
+      plugin: _exports,
+      options: {
+        producerService: ProducerService,
+        usersService,
+        validator: ExportsValidator,
       },
     },
   ]);

@@ -1,4 +1,3 @@
-const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const format = require('pg-format');
 const InvariantError = require('../../exceptions/InvariantError');
