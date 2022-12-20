@@ -9,7 +9,7 @@ class VerificationsService {
   }
 
   async deleteVerificationToken(userId, token) {
-    await this.checkVerificationEmailAvailability(userId);
+    await this.checkVerificationEmailAvailability(userId, token);
 
     const query = {
       text: 'DELETE FROM verifications WHERE owner = $1 AND token = $2',
@@ -20,10 +20,10 @@ class VerificationsService {
     await this._usersService.validatingUser(userId);
   }
 
-  async checkVerificationEmailAvailability(userId) {
+  async checkVerificationEmailAvailability(userId, token) {
     const query = {
-      text: 'SELECT * FROM verifications WHERE owner = $1',
-      values: [userId],
+      text: 'SELECT * FROM verifications WHERE owner = $1 AND token = $2',
+      values: [userId, token],
     };
 
     const result = await this._pool.query(query);

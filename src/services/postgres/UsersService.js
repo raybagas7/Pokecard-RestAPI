@@ -10,17 +10,25 @@ class UsersService {
     this._pool = new Pool();
   }
 
-  async verifyNewUsername(username) {
+  async verifyNewUsername(username, email) {
     const query = {
-      text: 'SELECT username from users WHERE username = $1',
+      text: 'SELECT username, email from users WHERE username = $1',
       values: [username],
     };
 
     const result = await this._pool.query(query);
 
+    if (result.rowCount) {
+      const selectedEmail = result.rows[0].email;
+
+      if (selectedEmail === email) {
+        throw new InvariantError(`This email '${email}' has been used`);
+      }
+    }
+
     if (result.rowCount > 0) {
       throw new InvariantError(
-        'Failed to add new user because Username has been used'
+        `Failed to add new user as '${username}' because Username has been used`
       );
     }
   }
@@ -32,7 +40,7 @@ class UsersService {
     profile_img = undefined,
     email,
   }) {
-    await this.verifyNewUsername(username);
+    await this.verifyNewUsername(username, email);
 
     const id = `poke-${nanoid(16)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -53,7 +61,7 @@ class UsersService {
 
   async getUserById(userId) {
     const query = {
-      text: 'SELECT id, username, trainer_name, email FROM users WHERE id = $1',
+      text: 'SELECT id, username, trainer_name, email, profile_img, is_valid FROM users WHERE id = $1',
       values: [userId],
     };
 
