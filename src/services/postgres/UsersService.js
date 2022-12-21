@@ -61,7 +61,7 @@ class UsersService {
 
   async getUserById(userId) {
     const query = {
-      text: 'SELECT id, username, trainer_name, email, profile_img, is_valid FROM users WHERE id = $1',
+      text: 'SELECT id, username, trainer_name, email, profile_img, is_valid, wait_verify FROM users WHERE id = $1',
       values: [userId],
     };
 
@@ -111,12 +111,32 @@ class UsersService {
       throw new NotFoundError('Email not found');
     }
 
+    await this.setToWaitingForVerify(userId);
+
     return result.rows[0].trainer_name;
+  }
+
+  async setToWaitingForVerify(id) {
+    const query = {
+      text: 'UPDATE users SET wait_verify = true WHERE id = $1',
+      values: [id],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async setToNotWaitingForVerify(id) {
+    const query = {
+      text: 'UPDATE users SET wait_verify = false WHERE id = $1',
+      values: [id],
+    };
+
+    await this._pool.query(query);
   }
 
   async validatingUser(userId) {
     const query = {
-      text: 'UPDATE users SET is_valid = true WHERE id = $1',
+      text: 'UPDATE users SET is_valid = true, wait_verify = false WHERE id = $1',
       values: [userId],
     };
 
