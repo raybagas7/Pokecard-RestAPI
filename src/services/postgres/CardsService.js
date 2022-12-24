@@ -19,13 +19,15 @@ class CardsService {
         card.legendary,
         JSON.stringify(card.types),
         JSON.stringify(card.stats),
+        JSON.stringify(card.move1),
+        JSON.stringify(card.move2),
         owner,
       ])
     );
 
     const result = await this._pool.query(
       format(
-        'INSERT INTO cards (card_id, poke_id, name, attribute, legendary, types, stats, owner) VALUES %L RETURNING card_id, poke_id, name',
+        'INSERT INTO cards (card_id, poke_id, name, attribute, legendary, types, stats, move1, move2, owner) VALUES %L RETURNING card_id, poke_id, name',
         cardsArray
       )
     );

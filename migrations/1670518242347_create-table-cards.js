@@ -30,6 +30,14 @@ exports.up = (pgm) => {
       type: 'JSON',
       notNull: true,
     },
+    move1: {
+      type: 'JSON',
+      notNull: true,
+    },
+    move2: {
+      type: 'JSON',
+      notNull: true,
+    },
     owner: {
       type: 'VARCHAR(50)',
       notNull: true,

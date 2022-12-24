@@ -46,6 +46,24 @@ const AddCardByOwnerSchema = Joi.object({
           name: Joi.string().required(),
         })
         .required(),
+      move1: Joi.object({
+        id: Joi.number().integer().required(),
+        name: Joi.string().required(),
+        accuracy: Joi.number().integer().allow(null).required(),
+        power: Joi.number().integer().allow(null).required(),
+        pp: Joi.number().integer().allow(null).required(),
+        ailment: Joi.string().required(),
+        type: Joi.string().required(),
+      }).required(),
+      move2: Joi.object({
+        id: Joi.number().integer().required(),
+        name: Joi.string().required(),
+        accuracy: Joi.number().integer().allow(null).required(),
+        power: Joi.number().integer().allow(null).required(),
+        pp: Joi.number().integer().allow(null).required(),
+        ailment: Joi.string().required(),
+        type: Joi.string().required(),
+      }).required(),
     })
     .required(),
 });
