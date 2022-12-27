@@ -12,6 +12,7 @@ const AddCardByOwnerSchema = Joi.object({
       name: Joi.string().required(),
       attribute: Joi.string().valid('normal', 'shiny').required(),
       legendary: Joi.boolean().required(),
+      mythical: Joi.boolean().required(),
       types: Joi.array()
         .items({
           name: Joi.string()

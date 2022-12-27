@@ -24,9 +24,15 @@ const ProducerService = require('./services/rabbitmq/ProducerService');
 const ExportsValidator = require('./validator/exports');
 const VerificationsService = require('./services/postgres/VerificationsService');
 const verifications = require('./api/verifications');
+const ShowcasesService = require('./services/postgres/ShowcasesService');
+const ShuffledService = require('./services/postgres/ShuffledService');
+const shuffled = require('./api/shuffled');
+const ShuffledValidator = require('./validator/shuffled');
 
 const init = async () => {
-  const usersService = new UsersService();
+  const showcasesService = new ShowcasesService();
+  const shuffledService = new ShuffledService();
+  const usersService = new UsersService(showcasesService, shuffledService);
   const authenticationsService = new AuthenticationsService();
   const creditsService = new CreditsService();
   const cardsService = new CardsService();
@@ -110,6 +116,13 @@ const init = async () => {
       plugin: verifications,
       options: {
         service: verificationsService,
+      },
+    },
+    {
+      plugin: shuffled,
+      options: {
+        service: shuffledService,
+        validator: ShuffledValidator,
       },
     },
   ]);

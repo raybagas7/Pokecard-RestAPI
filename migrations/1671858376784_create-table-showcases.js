@@ -8,27 +8,27 @@ exports.up = (pgm) => {
     },
     case1: {
       type: 'VARCHAR(50)',
-      notNull: true,
+      notNull: false,
     },
     case2: {
       type: 'VARCHAR(50)',
-      notNull: true,
+      notNull: false,
     },
     case3: {
       type: 'VARCHAR(50)',
-      notNull: true,
+      notNull: false,
     },
     case4: {
       type: 'VARCHAR(50)',
-      notNull: true,
+      notNull: false,
     },
     case5: {
       type: 'VARCHAR(50)',
-      notNull: true,
+      notNull: false,
     },
     case6: {
       type: 'VARCHAR(50)',
-      notNull: true,
+      notNull: false,
     },
     owner: {
       type: 'VARCHAR(50)',

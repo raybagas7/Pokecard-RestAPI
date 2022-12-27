@@ -22,6 +22,10 @@ exports.up = (pgm) => {
       type: 'BOOLEAN',
       notNull: true,
     },
+    mythical: {
+      type: 'BOOLEAN',
+      notNull: true,
+    },
     types: {
       type: 'JSON',
       notNull: true,
