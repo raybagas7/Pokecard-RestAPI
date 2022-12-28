@@ -58,7 +58,7 @@ class UsersService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = {
-      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+      text: `INSERT INTO users VALUES($1, nextval('search_id_sequences'), $2, $3, $4, $5, $6) RETURNING id`,
       values: [id, username, hashedPassword, trainer_name, profile_img, email],
     };
 
@@ -75,7 +75,7 @@ class UsersService {
 
   async getUserById(userId) {
     const query = {
-      text: 'SELECT id, username, trainer_name, email, profile_img, is_valid, wait_verify FROM users WHERE id = $1',
+      text: 'SELECT id, search_id, username, trainer_name, email, profile_img, is_valid, wait_verify FROM users WHERE id = $1',
       values: [userId],
     };
 

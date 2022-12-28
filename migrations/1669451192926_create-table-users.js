@@ -6,6 +6,11 @@ exports.up = (pgm) => {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
+    search_id: {
+      type: 'SERIAL',
+      unique: true,
+      notNull: true,
+    },
     username: {
       type: 'VARCHAR(50)',
       unique: true,
