@@ -5,7 +5,7 @@ module.exports = {
   name: 'shuffled',
   version: '1.0.0',
   register: async (server, { service, validator }) => {
-    const usersHandler = new ShuffledHandler(service, validator);
-    server.route(routes(usersHandler));
+    const shuffledHandler = new ShuffledHandler(service, validator);
+    server.route(routes(shuffledHandler));
   },
 };

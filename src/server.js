@@ -28,14 +28,16 @@ const ShowcasesService = require('./services/postgres/ShowcasesService');
 const ShuffledService = require('./services/postgres/ShuffledService');
 const shuffled = require('./api/shuffled');
 const ShuffledValidator = require('./validator/shuffled');
+const showcases = require('./api/showcases');
+const ShowcasesValidator = require('./validator/showcases');
 
 const init = async () => {
-  const showcasesService = new ShowcasesService();
+  const cardsService = new CardsService();
+  const showcasesService = new ShowcasesService(cardsService);
   const shuffledService = new ShuffledService();
   const usersService = new UsersService(showcasesService, shuffledService);
   const authenticationsService = new AuthenticationsService();
   const creditsService = new CreditsService();
-  const cardsService = new CardsService();
   const verificationsService = new VerificationsService(usersService);
 
   const server = Hapi.server({
@@ -123,6 +125,13 @@ const init = async () => {
       options: {
         service: shuffledService,
         validator: ShuffledValidator,
+      },
+    },
+    {
+      plugin: showcases,
+      options: {
+        service: showcasesService,
+        validator: ShowcasesValidator,
       },
     },
   ]);

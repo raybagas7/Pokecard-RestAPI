@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const format = require('pg-format');
+const AuthorizationError = require('../../exceptions/AuthorizationError');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
@@ -69,6 +70,25 @@ class CardsService {
     }
 
     return result.rows;
+  }
+
+  async verifyIdAndCardOwner(cardId, owner) {
+    const query = {
+      text: 'SELECT card_id, owner FROM cards WHERE card_id = $1',
+      values: [cardId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Card not exist');
+    }
+
+    const card = result.rows[0];
+
+    if (card.owner !== owner) {
+      throw new AuthorizationError('This card not belong to you');
+    }
   }
 }
 
