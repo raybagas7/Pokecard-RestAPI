@@ -16,6 +16,14 @@ const routes = (handler) => [
     },
   },
   {
+    method: 'GET',
+    path: '/credits/totalcards',
+    handler: handler.getCreditAndTotalCardsHandler,
+    options: {
+      auth: 'pokecard_jwt',
+    },
+  },
+  {
     method: 'PUT',
     path: '/credits/pokeball/reduce',
     handler: handler.putReducePokeBallHandler,

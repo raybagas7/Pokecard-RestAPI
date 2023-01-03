@@ -184,6 +184,30 @@ class CreditsService {
 
     return result.rows[0];
   }
+
+  async getUserCreditAndTotalCards(ownerId) {
+    const query = {
+      text: `SELECT poke_ball, ultra_ball, master_ball, coin,
+      COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'normal' THEN 1 ELSE null END) AS Normal,
+      COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'shiny' THEN 1 ELSE null END) AS Shiny,
+      COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'normal' THEN 1 ELSE null END) AS legendarymyth,
+      COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'shiny' THEN 1 ELSE null END) AS lmshine
+      FROM credits
+      LEFT JOIN cards
+      ON credits.owner = cards.owner
+      WHERE credits.owner = $1
+      GROUP BY credits.poke_ball, credits.ultra_ball, credits.master_ball, credits.coin`,
+      values: [ownerId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('User never exist');
+    }
+
+    return result.rows[0];
+  }
 }
 
 module.exports = CreditsService;

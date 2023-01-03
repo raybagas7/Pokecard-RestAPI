@@ -33,7 +33,7 @@ class ShowcasesService {
     const query = {
       text: `WITH newmain
       AS (SELECT
-        unnest(array[1, 2, 3, 4, 5, 6]) AS "case",
+        unnest(array[1, 2, 3, 4, 5, 6]) AS "case_number",
         unnest(array[case1, case2, case3, case4, case5, case6]) AS "card_id"
         FROM showcases
         WHERE showcases.owner = $1)
@@ -41,7 +41,7 @@ class ShowcasesService {
       FROM newmain
       LEFT JOIN cards
       ON newmain.card_id = cards.card_id
-      ORDER BY newmain.case`,
+      ORDER BY newmain.case_number`,
       values: [userId],
     };
 

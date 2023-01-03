@@ -38,6 +38,19 @@ class CreditsHandler {
     };
   }
 
+  async getCreditAndTotalCardsHandler(request) {
+    const { id: ownerId } = request.auth.credentials;
+
+    const credit = await this._service.getUserCreditAndTotalCards(ownerId);
+
+    return {
+      status: 'success',
+      data: {
+        credit,
+      },
+    };
+  }
+
   async putReducePokeBallHandler(request) {
     this._validator.validatePutPokeBallPayload(request.payload);
 
