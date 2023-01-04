@@ -112,6 +112,22 @@ class CreditsHandler {
       },
     };
   }
+
+  async putCreditDailyClaimHandler(request) {
+    const { id: ownerId } = request.auth.credentials;
+    // console.log(ownerId);
+
+    const creditAmount = await this._service.claimDailyCredit(ownerId);
+    // console.log(creditAmount);
+
+    return {
+      status: 'success',
+      message: 'Daily gift claimed',
+      data: {
+        creditAmount,
+      },
+    };
+  }
 }
 
 module.exports = CreditsHandler;

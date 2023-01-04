@@ -47,6 +47,14 @@ const routes = (handler) => [
       auth: 'pokecard_jwt',
     },
   },
+  {
+    method: 'PUT',
+    path: '/credits/claim/daily',
+    handler: handler.putCreditDailyClaimHandler,
+    options: {
+      auth: 'pokecard_jwt',
+    },
+  },
 ];
 
 module.exports = routes;

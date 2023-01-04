@@ -5,15 +5,16 @@ const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class CreditsService {
-  constructor() {
+  constructor(usersService) {
     this._pool = new Pool();
+    this._usersService = usersService;
   }
 
   async addNewCredit(owner) {
     const id = `credit-${nanoid(16)}`;
 
     const query = {
-      text: 'INSERT INTO credits VALUES($1, 30, 15, 5, 5000, $2) RETURNING credit_id',
+      text: 'INSERT INTO credits VALUES($1, 70, 20, 10, 10000, $2) RETURNING credit_id',
       values: [id, owner],
     };
 
@@ -149,26 +150,26 @@ class CreditsService {
     return result.rows[0];
   }
 
-  async increaseCreditCoin(creditId, owner) {
-    await this.verifyCreditIdAndOwner(creditId, owner);
+  // async increaseCreditCoin(creditId, owner) {
+  //   await this.verifyCreditIdAndOwner(creditId, owner);
 
-    const query = {
-      text: `UPDATE credits
-      SET coin = coin + 500
-      WHERE credit_id = $1
-      AND owner = $2
-      RETURNING credit_id, coin`,
-      values: [creditId, owner],
-    };
+  //   const query = {
+  //     text: `UPDATE credits
+  //     SET coin = coin + 500
+  //     WHERE credit_id = $1
+  //     AND owner = $2
+  //     RETURNING credit_id, coin`,
+  //     values: [creditId, owner],
+  //   };
 
-    const result = await this._pool.query(query);
+  //   const result = await this._pool.query(query);
 
-    if (!result.rowCount) {
-      throw new InvariantError('Failed to add coin');
-    }
+  //   if (!result.rowCount) {
+  //     throw new InvariantError('Failed to add coin');
+  //   }
 
-    return result.rows[0];
-  }
+  //   return result.rows[0];
+  // }
 
   async getCreditByOwnerId(ownerId) {
     const query = {
@@ -204,6 +205,29 @@ class CreditsService {
 
     if (!result.rowCount) {
       throw new InvariantError('User never exist');
+    }
+
+    return result.rows[0];
+  }
+
+  async claimDailyCredit(ownerId) {
+    await this._usersService.verifyAbleToClaim(ownerId);
+    await this._usersService.setNextDailyTommorow(ownerId);
+
+    const query = {
+      text: `UPDATE credits SET poke_ball = poke_ball + 7,
+      ultra_ball = ultra_ball + 3,
+      master_ball = master_ball + 1,
+      coin = coin + 1000
+      WHERE owner = $1
+      RETURNING poke_ball, ultra_ball, master_ball, coin`,
+      values: [ownerId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('Failed to claim daily gift');
     }
 
     return result.rows[0];

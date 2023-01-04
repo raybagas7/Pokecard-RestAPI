@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
+const moment = require('moment-timezone');
 const bcrypt = require('bcrypt');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
@@ -56,10 +57,20 @@ class UsersService {
 
     const id = `poke-${nanoid(16)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
+    const indoTimesNow = moment().tz('Asia/Jakarta').format('YYYY-MM-DD');
 
     const query = {
-      text: `INSERT INTO users VALUES($1, nextval('search_id_sequences'), $2, $3, $4, $5, $6) RETURNING id`,
-      values: [id, username, hashedPassword, trainer_name, profile_img, email],
+      text: `INSERT INTO users (id, search_id, username, password, trainer_name, profile_img, email, next_daily) 
+      VALUES($1, nextval('search_id_sequences'), $2, $3, $4, $5, $6, $7) RETURNING id`,
+      values: [
+        id,
+        username,
+        hashedPassword,
+        trainer_name,
+        profile_img,
+        email,
+        indoTimesNow,
+      ],
     };
 
     const result = await this._pool.query(query);
@@ -75,7 +86,7 @@ class UsersService {
 
   async getUserById(userId) {
     const query = {
-      text: 'SELECT id, search_id, username, trainer_name, email, profile_img, is_valid, wait_verify FROM users WHERE id = $1',
+      text: 'SELECT id, search_id, username, trainer_name, email, profile_img, is_valid, wait_verify, next_daily FROM users WHERE id = $1',
       values: [userId],
     };
 
@@ -111,6 +122,28 @@ class UsersService {
     }
 
     return id;
+  }
+
+  async setUserToLoggedIn(userId) {
+    const indoTimestamps = moment()
+      .tz('Asia/Jakarta')
+      .format('YYYY-MM-DD hh:mm:ss');
+    // console.log(waktuIndoNow);
+    const query = {
+      text: 'UPDATE users SET is_login = true, last_login = $1 WHERE id = $2',
+      values: [indoTimestamps, userId],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async setUserToLoggedOut(userId) {
+    const query = {
+      text: 'UPDATE users SET is_login = false WHERE id = $1',
+      values: [userId],
+    };
+
+    await this._pool.query(query);
   }
 
   async verifyEmailAvailability(userId, userEmail) {
@@ -152,6 +185,43 @@ class UsersService {
     const query = {
       text: 'UPDATE users SET is_valid = true, wait_verify = false WHERE id = $1',
       values: [userId],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async verifyAbleToClaim(userId) {
+    const query = {
+      text: 'SELECT next_daily FROM users WHERE id = $1',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    const daily = result.rows[0];
+
+    if (!result.rowCount) {
+      throw new InvariantError('User never exist');
+    }
+
+    const indoTimesNow = moment().tz('Asia/Jakarta').format('YYYY-MM-DD');
+
+    const beAble = moment(daily.next_daily).isSameOrBefore(indoTimesNow);
+
+    if (!beAble) {
+      throw new InvariantError(`You can't get daily claim now`);
+    }
+  }
+
+  async setNextDailyTommorow(userId) {
+    const indoTimesNow = moment()
+      .tz('Asia/Jakarta')
+      .add(1, 'd')
+      .format('YYYY-MM-DD');
+
+    const query = {
+      text: 'UPDATE users SET next_daily = $1 WHERE id = $2',
+      values: [indoTimesNow, userId],
     };
 
     await this._pool.query(query);

@@ -37,7 +37,7 @@ const init = async () => {
   const shuffledService = new ShuffledService();
   const usersService = new UsersService(showcasesService, shuffledService);
   const authenticationsService = new AuthenticationsService();
-  const creditsService = new CreditsService();
+  const creditsService = new CreditsService(usersService);
   const verificationsService = new VerificationsService(usersService);
 
   const server = Hapi.server({
