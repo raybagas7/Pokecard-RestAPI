@@ -2,40 +2,59 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 const config = require('./utils/config');
+const ClientError = require('./exceptions/ClientError');
 
-// Users Api
+//users API
 const users = require('./api/users');
 const UsersService = require('./services/postgres/UsersService');
 const UsersValidator = require('./validator/users');
-const ClientError = require('./exceptions/ClientError');
-
+//authentications
 const authentications = require('./api/authentications');
 const AuthenticationsService = require('./services/postgres/AuthenticationsService');
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
+//credits API
 const credits = require('./api/credits');
 const CreditsService = require('./services/postgres/CreditsService');
 const CreditsValidator = require('./validator/credits');
+//cards API
 const CardsService = require('./services/postgres/CardsService');
 const cards = require('./api/cards');
 const CardsValidator = require('./validator/cards');
+//exports API
 const _exports = require('./api/exports');
 const ProducerService = require('./services/rabbitmq/ProducerService');
 const ExportsValidator = require('./validator/exports');
+//verifications API
 const VerificationsService = require('./services/postgres/VerificationsService');
 const verifications = require('./api/verifications');
+//showcases API
 const ShowcasesService = require('./services/postgres/ShowcasesService');
+const showcases = require('./api/showcases');
+const ShowcasesValidator = require('./validator/showcases');
+//shuffled API
 const ShuffledService = require('./services/postgres/ShuffledService');
 const shuffled = require('./api/shuffled');
 const ShuffledValidator = require('./validator/shuffled');
-const showcases = require('./api/showcases');
-const ShowcasesValidator = require('./validator/showcases');
+//trades API
+const TradesService = require('./services/postgres/TradesService');
+const trades = require('./api/trades');
+const TradesValidator = require('./validator/trades');
+const OffersService = require('./services/postgres/OffersService');
+const offers = require('./api/offers');
+const OffersValidator = require('./validator/offers');
 
 const init = async () => {
   const cardsService = new CardsService();
+  const tradesService = new TradesService(cardsService);
+  const offersService = new OffersService(cardsService);
   const showcasesService = new ShowcasesService(cardsService);
   const shuffledService = new ShuffledService();
-  const usersService = new UsersService(showcasesService, shuffledService);
+  const usersService = new UsersService(
+    showcasesService,
+    shuffledService,
+    tradesService
+  );
   const authenticationsService = new AuthenticationsService();
   const creditsService = new CreditsService(usersService);
   const verificationsService = new VerificationsService(usersService);
@@ -132,6 +151,20 @@ const init = async () => {
       options: {
         service: showcasesService,
         validator: ShowcasesValidator,
+      },
+    },
+    {
+      plugin: trades,
+      options: {
+        service: tradesService,
+        validator: TradesValidator,
+      },
+    },
+    {
+      plugin: offers,
+      options: {
+        service: offersService,
+        validator: OffersValidator,
       },
     },
   ]);

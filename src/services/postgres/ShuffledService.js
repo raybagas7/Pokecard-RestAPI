@@ -1,6 +1,5 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
-const format = require('pg-format');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class ShuffledService {

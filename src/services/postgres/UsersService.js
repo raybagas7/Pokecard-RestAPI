@@ -7,10 +7,11 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthenticationError = require('../../exceptions/AuthenticationError');
 
 class UsersService {
-  constructor(showcasesService, shuffledService) {
+  constructor(showcasesService, shuffledService, tradesService) {
     this._pool = new Pool();
     this._showcasesService = showcasesService;
     this._shuffledService = shuffledService;
+    this._tradesService = tradesService;
   }
 
   async verifyNewUsername(username, email) {
@@ -35,16 +36,6 @@ class UsersService {
       );
     }
   }
-
-  // async addShowCases(userId) {
-  //   const showCaseId = `showcase-${nanoid(16)}`;
-  //   const query = {
-  //     text: 'INSERT INTO showcases (showcase_id, owner) VALUES($1, $2)',
-  //     values: [showCaseId, userId],
-  //   };
-
-  //   await this._pool.query(query);
-  // }
 
   async addUser({
     username,
@@ -79,6 +70,7 @@ class UsersService {
       throw new InvariantError('Failed to add a new user');
     }
     await this._showcasesService.addShowCases(id);
+    await this._tradesService.addTrades(id);
     await this._shuffledService.addNewShufflePool(id);
 
     return result.rows[0].id;
