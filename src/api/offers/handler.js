@@ -41,6 +41,48 @@ class OffersHandler {
       message: 'Offer has been deleted',
     };
   }
+
+  async getOfferListTraderHandler(request) {
+    const { trader_card_id } = request.params;
+    const { id: ownerId } = request.auth.credentials;
+
+    const list_offer = await this._service.getOfferListForTraderByCardId(
+      trader_card_id,
+      ownerId
+    );
+
+    return {
+      status: 'success',
+      message: 'Offer list retrieved',
+      data: {
+        list_offer,
+      },
+    };
+  }
+
+  async acceptAnOfferHandler(request) {
+    this._validator.validateAcceptAnOfferPayload(request.payload);
+    const { id: traderId } = request.auth.credentials;
+    const { offer_id } = request.payload;
+
+    const {
+      offerer_card_id: offererCardId,
+      trader_card_id: traderCardId,
+      owner: offererId,
+    } = await this._service.getOfferDetail(offer_id);
+
+    await this._service.acceptAnOffer(
+      traderId,
+      offererId,
+      traderCardId,
+      offererCardId
+    );
+
+    return {
+      status: 'success',
+      message: `Offer accepted you recieve this card ${offererCardId}`,
+    };
+  }
 }
 
 module.exports = OffersHandler;

@@ -1,8 +1,9 @@
 const autoBind = require('auto-bind');
 
 class TradesHandler {
-  constructor(service, validator) {
-    this._service = service;
+  constructor(tradesService, showcasesService, validator) {
+    this._tradesService = tradesService;
+    this._showcasesService = showcasesService;
     this._validator = validator;
     autoBind(this);
   }
@@ -13,7 +14,12 @@ class TradesHandler {
     const { id: credentialId } = request.auth.credentials;
     const { card_id, window_number } = request.payload;
 
-    await this._service.updateCardToWindow(
+    await this._showcasesService.checkUserShowcasesAvailability(
+      card_id,
+      credentialId
+    );
+
+    await this._tradesService.updateCardToWindow(
       card_id,
       credentialId,
       window_number
@@ -28,7 +34,7 @@ class TradesHandler {
   async getUserTradesHandler(request) {
     const { id: credentialId } = request.auth.credentials;
 
-    const trades = await this._service.getUserTrades(credentialId);
+    const trades = await this._tradesService.getUserTrades(credentialId);
     return {
       status: 'success',
       message: `Trades retrieved`,

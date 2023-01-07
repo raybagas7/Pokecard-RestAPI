@@ -120,7 +120,6 @@ class UsersService {
     const indoTimestamps = moment()
       .tz('Asia/Jakarta')
       .format('YYYY-MM-DD hh:mm:ss');
-    // console.log(waktuIndoNow);
     const query = {
       text: 'UPDATE users SET is_login = true, last_login = $1 WHERE id = $2',
       values: [indoTimestamps, userId],

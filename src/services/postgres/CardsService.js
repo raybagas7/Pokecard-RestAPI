@@ -87,8 +87,21 @@ class CardsService {
     const card = result.rows[0];
 
     if (card.owner !== owner) {
-      throw new AuthorizationError('This card not belong to you');
+      throw new AuthorizationError('This card is not belong to you');
     }
+  }
+
+  async swapCardOwner(traderId, OffererId, traderCardId, offererCardId) {
+    const query = {
+      text: `UPDATE cards
+        SET owner = CASE card_id
+        WHEN $1 THEN $2
+        WHEN $3 THEN $4 END
+        WHERE card_id IN($1, $3)`,
+      values: [traderCardId, OffererId, offererCardId, traderId],
+    };
+
+    await this._pool.query(query);
   }
 }
 

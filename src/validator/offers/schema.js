@@ -9,4 +9,12 @@ const deleteAnOfferSchema = Joi.object({
   offer_id: Joi.string().min(22).max(22).required(),
 });
 
-module.exports = { addAnOfferSchema, deleteAnOfferSchema };
+const acceptAnOfferSchema = Joi.object({
+  offer_id: Joi.string().min(22).max(22).required(),
+});
+
+module.exports = {
+  addAnOfferSchema,
+  deleteAnOfferSchema,
+  acceptAnOfferSchema,
+};

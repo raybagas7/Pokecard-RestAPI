@@ -47,8 +47,12 @@ const OffersValidator = require('./validator/offers');
 const init = async () => {
   const cardsService = new CardsService();
   const tradesService = new TradesService(cardsService);
-  const offersService = new OffersService(cardsService);
   const showcasesService = new ShowcasesService(cardsService);
+  const offersService = new OffersService(
+    cardsService,
+    showcasesService,
+    tradesService
+  );
   const shuffledService = new ShuffledService();
   const usersService = new UsersService(
     showcasesService,
@@ -149,14 +153,16 @@ const init = async () => {
     {
       plugin: showcases,
       options: {
-        service: showcasesService,
+        showcasesService,
+        tradesService,
         validator: ShowcasesValidator,
       },
     },
     {
       plugin: trades,
       options: {
-        service: tradesService,
+        tradesService,
+        showcasesService,
         validator: TradesValidator,
       },
     },

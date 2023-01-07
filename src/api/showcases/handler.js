@@ -1,8 +1,9 @@
 const autoBind = require('auto-bind');
 
 class ShowcasesHandler {
-  constructor(service, validator) {
-    this._service = service;
+  constructor(showcasesService, tradesService, validator) {
+    this._showcasesService = showcasesService;
+    this._tradesService = tradesService;
     this._validator = validator;
     autoBind(this);
   }
@@ -13,7 +14,13 @@ class ShowcasesHandler {
     const { id: credentialId } = request.auth.credentials;
     const { card_id, case_number } = request.payload;
 
-    await this._service.updateCardToCase(card_id, credentialId, case_number);
+    await this._tradesService.getUserTradesAvailability(card_id, credentialId);
+
+    await this._showcasesService.updateCardToCase(
+      card_id,
+      credentialId,
+      case_number
+    );
 
     return {
       status: 'success',
@@ -24,7 +31,9 @@ class ShowcasesHandler {
   async getUserShowcasesHandler(request) {
     const { id: credentialId } = request.auth.credentials;
 
-    const showcases = await this._service.getUserShowcases(credentialId);
+    const showcases = await this._showcasesService.getUserShowcases(
+      credentialId
+    );
     return {
       status: 'success',
       message: `Showcase retrieved`,

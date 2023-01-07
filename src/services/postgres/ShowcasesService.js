@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
+const NotFoundError = require('../../exceptions/NotFoundError');
 
 class ShowcasesService {
   constructor(cardsService) {
@@ -52,6 +53,30 @@ class ShowcasesService {
     }
 
     return result.rows;
+  }
+
+  async checkUserShowcasesAvailability(traderCardId, userId) {
+    const query = {
+      text: `SELECT case1, case2, case3, case4, case5, case6
+      FROM showcases WHERE owner = $1`,
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('showcases not found');
+    }
+
+    const check = result.rows[0];
+
+    const cases = Object.values(check);
+
+    if (cases.indexOf(traderCardId) !== -1) {
+      throw new InvariantError(
+        `Your card is in showcases you can't add it to trades or make an offer`
+      );
+    }
   }
 }
 
