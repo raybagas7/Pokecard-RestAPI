@@ -21,6 +21,7 @@ class TradesService {
 
   async updateCardToWindow(cardId, userId, windowNumber) {
     await this._cardsService.verifyIdAndCardOwner(cardId, userId);
+    await this.verifyCardIdInTrades(cardId, userId);
 
     const query = {
       text: `UPDATE trades SET window${windowNumber} = $1
@@ -29,6 +30,28 @@ class TradesService {
     };
 
     await this._pool.query(query);
+  }
+
+  async verifyCardIdInTrades(cardId, userId) {
+    const query = {
+      text: `SELECT window1, window2, window3, window4, window5, window6
+      FROM trades WHERE owner = $1`,
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('trades not found');
+    }
+
+    const check = result.rows[0];
+
+    const windows = Object.values(check);
+
+    if (windows.indexOf(cardId) !== -1) {
+      throw new InvariantError(`Your card is already in trades`);
+    }
   }
 
   async getUserTrades(userId) {
