@@ -103,6 +103,30 @@ class CardsService {
 
     await this._pool.query(query);
   }
+
+  async getTotalCardsBySearchId(searchId) {
+    const query = {
+      text: `SELECT users.trainer_name, users.search_id, users.profile_img,
+      COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'normal' THEN 1 ELSE null END) AS Normal,
+      COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'shiny' THEN 1 ELSE null END) AS Shiny,
+      COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'normal' THEN 1 ELSE null END) AS legendarymyth,
+      COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'shiny' THEN 1 ELSE null END) AS lmshine
+      FROM users
+      LEFT JOIN cards
+      ON users.id = cards.owner
+      WHERE users.search_id = $1
+      GROUP BY users.id, users.trainer_name`,
+      values: [searchId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Trainer not exist');
+    }
+
+    return result.rows[0];
+  }
 }
 
 module.exports = CardsService;

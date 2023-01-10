@@ -79,6 +79,34 @@ class TradesService {
     return result.rows;
   }
 
+  async getUserTradesBySearchId(searchId) {
+    const query = {
+      text: `WITH newmain
+      AS (SELECT
+        unnest(array[1, 2, 3, 4, 5, 6]) AS "window_number",
+        unnest(array[trades.window1, trades.window2, trades.window3, trades.window4, trades.window5, trades.window6]) AS "card_id"
+        FROM users
+        LEFT JOIN trades
+        ON users.id = trades.owner
+        WHERE users.search_id = $1
+      GROUP BY users.id, users.trainer_name, trades.window1, trades.window2, trades.window3, trades.window4, trades.window5, trades.window6)
+      SELECT newmain.*, cards.poke_id, cards.name, cards.attribute, cards.legendary, cards.mythical, cards.types, cards.stats, cards.move1, cards.move2
+      FROM newmain
+      LEFT JOIN cards
+      ON newmain.card_id = cards.card_id
+      ORDER BY newmain.window_number`,
+      values: [searchId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('Error to retrieve trades');
+    }
+
+    return result.rows;
+  }
+
   async getUserTradesAvailability(showcaseCardId, userId) {
     const query = {
       text: `SELECT window1, window2, window3, window4, window5, window6

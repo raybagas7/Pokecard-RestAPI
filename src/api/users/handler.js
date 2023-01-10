@@ -29,6 +29,16 @@ class UsersHandler {
     return response;
   }
 
+  async getRandomUser(request) {
+    const { id: ownerId } = request.auth.credentials;
+    const pool = await this._service.getRandomUser(ownerId);
+
+    return {
+      status: 'success',
+      data: { pool },
+    };
+  }
+
   async getUserByIdHandler(request) {
     const { id: ownerId } = request.auth.credentials;
     const user = await this._service.getUserById(ownerId);
@@ -38,6 +48,17 @@ class UsersHandler {
       data: {
         user,
       },
+    };
+  }
+
+  async getUserInformationBySearchId(request) {
+    const { search_id } = request.params;
+    const data = await this._service.getUserInformationBySearchId(search_id);
+
+    return {
+      status: 'success',
+      message: 'User informations retrieved',
+      data,
     };
   }
 }

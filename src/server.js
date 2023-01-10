@@ -57,7 +57,8 @@ const init = async () => {
   const usersService = new UsersService(
     showcasesService,
     shuffledService,
-    tradesService
+    tradesService,
+    cardsService
   );
   const authenticationsService = new AuthenticationsService();
   const creditsService = new CreditsService(usersService);

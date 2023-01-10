@@ -55,6 +55,34 @@ class ShowcasesService {
     return result.rows;
   }
 
+  async getUserShowcasesBySearchId(searchId) {
+    const query = {
+      text: `WITH newmain
+      AS (SELECT 
+        unnest(array[1, 2, 3, 4, 5, 6]) AS "case_number",
+        unnest(array[showcases.case1, showcases.case2, showcases.case3, showcases.case4, showcases.case5, showcases.case6]) AS "card_id"
+        FROM users
+        LEFT JOIN showcases
+        ON users.id = showcases.owner
+        WHERE users.search_id = $1
+      GROUP BY users.id, users.trainer_name, showcases.case1, showcases.case2, showcases.case3, showcases.case4, showcases.case5, showcases.case6)
+      SELECT newmain.*, cards.poke_id, cards.name, cards.attribute, cards.legendary, cards.mythical, cards.types, cards.stats, cards.move1, cards.move2
+      FROM newmain
+      LEFT JOIN cards
+      ON newmain.card_id = cards.card_id
+      ORDER BY newmain.case_number`,
+      values: [searchId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('Error to retrieve showcases');
+    }
+
+    return result.rows;
+  }
+
   async checkUserShowcasesAvailability(traderCardId, userId) {
     const query = {
       text: `SELECT case1, case2, case3, case4, case5, case6

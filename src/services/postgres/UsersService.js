@@ -7,11 +7,12 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthenticationError = require('../../exceptions/AuthenticationError');
 
 class UsersService {
-  constructor(showcasesService, shuffledService, tradesService) {
+  constructor(showcasesService, shuffledService, tradesService, cardsService) {
     this._pool = new Pool();
     this._showcasesService = showcasesService;
     this._shuffledService = shuffledService;
     this._tradesService = tradesService;
+    this._cardsService = cardsService;
   }
 
   async verifyNewUsername(username, email) {
@@ -216,6 +217,58 @@ class UsersService {
     };
 
     await this._pool.query(query);
+  }
+
+  async getUserInformationBySearchId(searchId) {
+    const query = {
+      text: 'SELECT search_id FROM users WHERE search_id = $1',
+      values: [searchId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('No trainer with this friend or search id');
+    }
+
+    const totalCards = await this._cardsService.getTotalCardsBySearchId(
+      searchId
+    );
+
+    const showcaseCards =
+      await this._showcasesService.getUserShowcasesBySearchId(searchId);
+
+    const tradeCards = await this._tradesService.getUserTradesBySearchId(
+      searchId
+    );
+
+    return { totalCards, showcaseCards, tradeCards };
+  }
+
+  async getRandomUser(userId) {
+    const query = {
+      text: `SELECT users.trainer_name, users.search_id,
+      COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'normal' THEN 1 ELSE null END) AS Normal,
+      COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'shiny' THEN 1 ELSE null END) AS Shiny,
+      COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'normal' THEN 1 ELSE null END) AS legendarymyth,
+      COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'shiny' THEN 1 ELSE null END) AS lmshine
+      FROM users
+      LEFT JOIN cards
+      ON users.id = cards.owner
+      WHERE users.id != $1
+      GROUP BY users.id, users.trainer_name
+      ORDER BY RANDOM()
+      LIMIT 30;`,
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('No other trainer registered yet');
+    }
+
+    return result.rows;
   }
 }
 
