@@ -1,9 +1,10 @@
 const autoBind = require('auto-bind');
 
 class TradesHandler {
-  constructor(tradesService, showcasesService, validator) {
+  constructor(tradesService, showcasesService, offersService, validator) {
     this._tradesService = tradesService;
     this._showcasesService = showcasesService;
+    this._offersService = offersService;
     this._validator = validator;
     autoBind(this);
   }
@@ -18,6 +19,8 @@ class TradesHandler {
       card_id,
       credentialId
     );
+
+    await this._offersService.verifyOffererCardIdAvailability(card_id);
 
     await this._tradesService.updateCardToWindow(
       card_id,

@@ -101,9 +101,7 @@ class ShowcasesService {
     const cases = Object.values(check);
 
     if (cases.indexOf(traderCardId) !== -1) {
-      throw new InvariantError(
-        `Your card is in showcases you can't add it to trades or make an offer`
-      );
+      throw new InvariantError(`Your card is currently on showcases`);
     }
   }
 }

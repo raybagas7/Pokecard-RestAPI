@@ -156,6 +156,7 @@ const init = async () => {
       options: {
         showcasesService,
         tradesService,
+        offersService,
         validator: ShowcasesValidator,
       },
     },
@@ -164,6 +165,7 @@ const init = async () => {
       options: {
         tradesService,
         showcasesService,
+        offersService,
         validator: TradesValidator,
       },
     },

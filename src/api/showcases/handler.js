@@ -1,9 +1,10 @@
 const autoBind = require('auto-bind');
 
 class ShowcasesHandler {
-  constructor(showcasesService, tradesService, validator) {
+  constructor(showcasesService, tradesService, offersService, validator) {
     this._showcasesService = showcasesService;
     this._tradesService = tradesService;
+    this._offersService = offersService;
     this._validator = validator;
     autoBind(this);
   }
@@ -15,6 +16,8 @@ class ShowcasesHandler {
     const { card_id, case_number } = request.payload;
 
     await this._tradesService.getUserTradesAvailability(card_id, credentialId);
+
+    await this._offersService.verifyOffererCardIdAvailability(card_id);
 
     await this._showcasesService.updateCardToCase(
       card_id,

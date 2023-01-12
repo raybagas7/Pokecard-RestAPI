@@ -24,11 +24,12 @@ class OffersService {
       offererUserId
     );
 
-    const offerId = `offer-${nanoid(16)}`;
     await this._cardsService.verifyIdAndCardOwner(
       offerer_cardId,
       offererUserId
     );
+
+    const offerId = `offer-${nanoid(16)}`;
 
     if (offerer_cardId === trader_cardId) {
       throw new InvariantError(`You can't make an offer to your own cards`);
@@ -57,9 +58,7 @@ class OffersService {
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
-      throw new InvariantError(
-        `You can't make an offer because card already offered to another trade`
-      );
+      throw new InvariantError(`This card is currently on offer`);
     }
   }
 
@@ -112,7 +111,7 @@ class OffersService {
     await this._cardsService.verifyIdAndCardOwner(traderCardId, traderId);
 
     const query = {
-      text: `SELECT offers.offerer_card_id, offers.offer_id, cards.poke_id, cards.name, cards.attribute,
+      text: `SELECT offers.offerer_card_id, offers.offer_id, cards.poke_id, cards.name, cards.attribute, cards.legendary,
             cards.mythical, cards.types, cards.stats, cards.move1, cards.move2, cards.owner,
             users.trainer_name, users.search_id, users.profile_img
             from offers

@@ -125,9 +125,7 @@ class TradesService {
     const windows = Object.values(check);
 
     if (windows.indexOf(showcaseCardId) !== -1) {
-      throw new InvariantError(
-        `Your card is in trades you can't add it to showcases or make an offer`
-      );
+      throw new InvariantError(`Your card is currently on trades`);
     }
   }
 
