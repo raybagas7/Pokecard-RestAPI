@@ -56,6 +56,27 @@ class CardsService {
     return result.rows;
   }
 
+  async verifyAndGetCardByOwnerCardId(cardId, owner) {
+    const query = {
+      text: 'SELECT * FROM cards WHERE card_id = $1',
+      values: [cardId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Card not exist');
+    }
+
+    const card = result.rows[0];
+
+    if (card.owner !== owner) {
+      throw new AuthorizationError('This card is not belong to you');
+    }
+    // console.log(result.rows);
+    return result.rows;
+  }
+
   async getCardByElement(elementType, ownerId) {
     const result = await this._pool.query(
       `SELECT * FROM cards 

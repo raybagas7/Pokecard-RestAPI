@@ -46,16 +46,18 @@ class OffersHandler {
     const { trader_card_id } = request.params;
     const { id: ownerId } = request.auth.credentials;
 
-    const list_offer = await this._service.getOfferListForTraderByCardId(
-      trader_card_id,
-      ownerId
-    );
+    const { list_offer, traderCard } =
+      await this._service.getOfferListForTraderByCardId(
+        trader_card_id,
+        ownerId
+      );
 
     return {
       status: 'success',
       message: 'Offer list retrieved',
       data: {
         list_offer,
+        traderCard,
       },
     };
   }
@@ -80,7 +82,7 @@ class OffersHandler {
 
     return {
       status: 'success',
-      message: `Offer accepted you recieve this card ${offererCardId}`,
+      message: `Offer accepted you recieve new card, check it in your collections`,
     };
   }
 }

@@ -61,12 +61,19 @@ class TradesService {
       unnest(array[1, 2, 3, 4, 5, 6]) AS "window_number",
       unnest(array[window1, window2, window3, window4, window5, window6]) AS "card_id"
       FROM trades
-      WHERE trades.owner = $1)
-      SELECT newmain.*, cards.poke_id, cards.name, cards.attribute, cards.legendary, cards.mythical, cards.types, cards.stats, cards.move1, cards.move2
-      FROM newmain
+      WHERE trades.owner = $1), 
+        newcount	  
+        AS(SELECT newmain.*,  COUNT(offers.trader_card_id) AS total_offer
+	      FROM newmain
+	      LEFT JOIN offers
+	      ON newmain.card_id = offers.trader_card_id
+	      GROUP BY newmain.window_number, newmain.card_id
+	      ORDER BY newmain.window_number)
+      SELECT newcount.*, cards.poke_id, cards.name, cards.attribute, cards.legendary, cards.mythical, cards.types, cards.stats, cards.move1, cards.move2
+      FROM newcount
       LEFT JOIN cards
-      ON newmain.card_id = cards.card_id
-      ORDER BY newmain.window_number`,
+      ON newcount.card_id = cards.card_id
+      ORDER BY newcount.window_number`,
       values: [userId],
     };
 

@@ -108,8 +108,11 @@ class OffersService {
   }
 
   async getOfferListForTraderByCardId(traderCardId, traderId) {
-    await this._cardsService.verifyIdAndCardOwner(traderCardId, traderId);
-
+    const traderCard = await this._cardsService.verifyAndGetCardByOwnerCardId(
+      traderCardId,
+      traderId
+    );
+    // console.log(traderCard);
     const query = {
       text: `SELECT offers.offerer_card_id, offers.offer_id, cards.poke_id, cards.name, cards.attribute, cards.legendary,
             cards.mythical, cards.types, cards.stats, cards.move1, cards.move2, cards.owner,
@@ -129,7 +132,9 @@ class OffersService {
       throw new NotFoundError('No offer found for this card');
     }
 
-    return result.rows;
+    const list_offer = result.rows;
+    // console.log(list_offer);
+    return { list_offer, traderCard };
   }
 
   async acceptAnOffer(traderId, offererId, traderCardId, offererCardId) {
