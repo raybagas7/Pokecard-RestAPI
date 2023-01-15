@@ -21,6 +21,7 @@ class TradesService {
 
   async updateCardToWindow(cardId, userId, windowNumber) {
     await this._cardsService.verifyIdAndCardOwner(cardId, userId);
+    await this.checkWindowSlot(userId, windowNumber);
     await this.verifyCardIdInTrades(cardId, userId);
 
     const query = {
@@ -30,6 +31,33 @@ class TradesService {
     };
 
     await this._pool.query(query);
+  }
+
+  async removeCardFromWindow(cardId, userId, windowNumber) {
+    await this._cardsService.verifyIdAndCardOwner(cardId, userId);
+
+    const query = {
+      text: `UPDATE trades SET window${windowNumber} = null WHERE owner = $1`,
+      values: [userId],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async checkWindowSlot(userId, windowNumber) {
+    const query = {
+      text: `SELECT window${windowNumber} FROM trades
+      WHERE owner = $1`,
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    const checkWindow = result.rows[0][`window${windowNumber}`];
+
+    if (checkWindow !== null) {
+      throw new InvariantError('This window has been filled with other card');
+    }
   }
 
   async verifyCardIdInTrades(cardId, userId) {

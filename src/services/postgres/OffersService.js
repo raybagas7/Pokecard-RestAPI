@@ -3,6 +3,7 @@ const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
+const { query } = require('@hapi/hapi/lib/validation');
 
 class OffersService {
   constructor(cardsService, showcasesService, tradesService) {
@@ -83,6 +84,15 @@ class OffersService {
     const query = {
       text: 'DELETE FROM offers WHERE offer_id = $1',
       values: [offerId],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async deleteAllOfferAttachToTradeCard(traderCardId) {
+    const query = {
+      text: 'DELETE FROM offers WHERE trader_card_id = $1',
+      values: [traderCardId],
     };
 
     await this._pool.query(query);

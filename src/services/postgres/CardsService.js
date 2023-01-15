@@ -133,7 +133,7 @@ class CardsService {
       COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'normal' THEN 1 ELSE null END) AS legendarymyth,
       COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'shiny' THEN 1 ELSE null END) AS lmshine
       FROM users
-      LEFT JOIN cards
+      LEFT JOIN cards  
       ON users.id = cards.owner
       WHERE users.search_id = $1
       GROUP BY users.id, users.trainer_name`,

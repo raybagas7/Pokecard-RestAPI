@@ -44,6 +44,26 @@ class TradesHandler {
       data: { trades },
     };
   }
+
+  async removeCardFromTradesWindow(request) {
+    this._validator.validatePutWindowPayload(request.payload);
+
+    const { id: credentialId } = request.auth.credentials;
+    const { card_id, window_number } = request.payload;
+
+    await this._tradesService.removeCardFromWindow(
+      card_id,
+      credentialId,
+      window_number
+    );
+
+    await this._offersService.deleteAllOfferAttachToTradeCard(card_id);
+
+    return {
+      status: 'success',
+      message: `Card removed from window trades number ${window_number}`,
+    };
+  }
 }
 
 module.exports = TradesHandler;

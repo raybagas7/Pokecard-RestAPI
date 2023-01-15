@@ -15,6 +15,14 @@ const routes = (handler) => [
       auth: 'pokecard_jwt',
     },
   },
+  {
+    method: 'PUT',
+    path: '/trades/remove',
+    handler: handler.removeCardFromTradesWindow,
+    options: {
+      auth: 'pokecard_jwt',
+    },
+  },
 ];
 
 module.exports = routes;
