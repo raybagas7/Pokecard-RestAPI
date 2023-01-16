@@ -17,6 +17,14 @@ const routes = (handler) => [
   },
   {
     method: 'GET',
+    path: '/offers',
+    handler: handler.getAllOfferListUserHandler,
+    options: {
+      auth: 'pokecard_jwt',
+    },
+  },
+  {
+    method: 'GET',
     path: '/offers/trader/{trader_card_id}',
     handler: handler.getOfferListTraderHandler,
     options: {

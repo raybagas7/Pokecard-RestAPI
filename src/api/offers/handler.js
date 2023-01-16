@@ -42,6 +42,20 @@ class OffersHandler {
     };
   }
 
+  async getAllOfferListUserHandler(request) {
+    const { id: ownerId } = request.auth.credentials;
+
+    const all_offer = await this._service.getAllOfferListByOwnerId(ownerId);
+
+    return {
+      status: 'success',
+      message: 'All Offer list user retrieved',
+      data: {
+        all_offer,
+      },
+    };
+  }
+
   async getOfferListTraderHandler(request) {
     const { trader_card_id } = request.params;
     const { id: ownerId } = request.auth.credentials;

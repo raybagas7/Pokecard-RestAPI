@@ -165,6 +165,35 @@ class OffersService {
     await this._pool.query(query);
   }
 
+  async getAllOfferListByOwnerId(ownerId) {
+    const query = {
+      text: `WITH newmain
+        AS (SELECT offers.*, cards.poke_id AS o_poke_id, cards.name AS o_name, 
+        cards.attribute AS o_attribute, cards.legendary AS o_legendary, cards.mythical AS o_mytchical
+        FROM offers
+        JOIN cards
+        ON offers.offerer_card_id = cards.card_id
+        WHERE offers.owner = $1)
+      SELECT newmain.*, cards.poke_id AS t_poke_id, cards.name AS t_name, 
+      cards.attribute AS t_attribute, cards.legendary AS t_legendary, cards.mythical AS t_mytchical,
+      users.trainer_name AS t_trainer_name, users.profile_img AS t_profile_img, users.search_id AS t_search_id
+      FROM newmain
+      JOIN cards
+      ON newmain.trader_card_id = cards.card_id
+      JOIN users
+      ON cards.owner = users.id`,
+      values: [ownerId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('No offer requests from this account');
+    }
+
+    return result.rows;
+  }
+
   async getOfferDetail(offer_id) {
     const query = {
       text: 'SELECT * FROM offers WHERE offer_id = $1',
