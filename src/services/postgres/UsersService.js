@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthenticationError = require('../../exceptions/AuthenticationError');
+const AuthorizationError = require('../../exceptions/AuthorizationError');
 
 class UsersService {
   constructor(showcasesService, shuffledService, tradesService, cardsService) {
@@ -171,6 +172,23 @@ class UsersService {
     };
 
     await this._pool.query(query);
+  }
+
+  async checkVerifiedUser(userId) {
+    const query = {
+      text: 'SELECT is_valid FROM users WHERE id = $1',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    const isValid = result.rows[0];
+
+    if (isValid.is_valid === false) {
+      throw new AuthorizationError(
+        'You need to verify your email to claim daily gift'
+      );
+    }
   }
 
   async validatingUser(userId) {

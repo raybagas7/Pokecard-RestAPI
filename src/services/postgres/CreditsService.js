@@ -14,7 +14,7 @@ class CreditsService {
     const id = `credit-${nanoid(16)}`;
 
     const query = {
-      text: 'INSERT INTO credits VALUES($1, 70, 20, 10, 10000, $2) RETURNING credit_id',
+      text: 'INSERT INTO credits VALUES($1, 10, 3, 2, 3000, $2) RETURNING credit_id',
       values: [id, owner],
     };
 
@@ -211,6 +211,7 @@ class CreditsService {
   }
 
   async claimDailyCredit(ownerId) {
+    await this._usersService.checkVerifiedUser(ownerId);
     await this._usersService.verifyAbleToClaim(ownerId);
     await this._usersService.setNextDailyTommorow(ownerId);
 

@@ -6,10 +6,10 @@ class AuthenticationsService {
     this._pool = new Pool();
   }
 
-  async addRefreshToken(token) {
+  async addRefreshToken(token, username) {
     const query = {
-      text: 'INSERT INTO authentications VALUES($1)',
-      values: [token],
+      text: 'UPDATE authentications SET token = $1 WHERE owner = $2',
+      values: [token, username],
     };
 
     await this._pool.query(query);
@@ -28,10 +28,10 @@ class AuthenticationsService {
     }
   }
 
-  async deleteRefreshToken(token) {
+  async deleteRefreshToken(token, username) {
     const query = {
-      text: 'DELETE FROM authentications WHERE token = $1',
-      values: [token],
+      text: 'UPDATE authentications SET token = null WHERE token = $1 AND owner = $2',
+      values: [token, username],
     };
 
     await this._pool.query(query);

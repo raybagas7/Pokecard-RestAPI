@@ -22,7 +22,7 @@ class AuthenticationsHandler {
     const accessToken = this._tokenManager.generateAccessToken({ id });
     const refreshToken = this._tokenManager.generateRefreshToken({ id });
 
-    await this._authenticationsService.addRefreshToken(refreshToken);
+    await this._authenticationsService.addRefreshToken(refreshToken, username);
     await this._usersService.setUserToLoggedIn(id);
 
     const response = h.response({
@@ -60,14 +60,17 @@ class AuthenticationsHandler {
   async deleteAuthenticationHandler(request) {
     this._validator.validateDeleteAuthenticationPayload(request.payload);
 
-    const { refreshToken } = request.payload;
+    const { refreshToken, username } = request.payload;
     const userId = JSON.parse(
       Buffer.from(refreshToken.split('.')[1], 'base64').toString()
     );
 
     await this._usersService.setUserToLoggedOut(userId.id);
     await this._authenticationsService.verifyRefreshToken(refreshToken);
-    await this._authenticationsService.deleteRefreshToken(refreshToken);
+    await this._authenticationsService.deleteRefreshToken(
+      refreshToken,
+      username
+    );
 
     return {
       status: 'success',
