@@ -216,8 +216,8 @@ class CreditsService {
     await this._usersService.setNextDailyTommorow(ownerId);
 
     const query = {
-      text: `UPDATE credits SET poke_ball = poke_ball + 7,
-      ultra_ball = ultra_ball + 3,
+      text: `UPDATE credits SET poke_ball = poke_ball + 3,
+      ultra_ball = ultra_ball + 1,
       master_ball = master_ball + 1,
       coin = coin + 1000
       WHERE owner = $1
@@ -232,6 +232,19 @@ class CreditsService {
     }
 
     return result.rows[0];
+  }
+
+  async addBonusVerifiedUserCredit(userId) {
+    const query = {
+      text: `UPDATE credits SET poke_ball = poke_ball + 60,
+      ultra_ball = ultra_ball + 20,
+      master_ball = master_ball + 10,
+      coin = coin + 10000
+      WHERE owner = $1`,
+      values: [userId],
+    };
+
+    await this._pool.query(query);
   }
 }
 

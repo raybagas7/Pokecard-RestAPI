@@ -7,6 +7,11 @@ const routes = (handler) => [
       auth: 'pokecard_jwt',
     },
   },
+  {
+    method: 'POST',
+    path: '/export/forgot/password',
+    handler: handler.postExportForgotPasswordHandler,
+  },
 ];
 
 module.exports = routes;

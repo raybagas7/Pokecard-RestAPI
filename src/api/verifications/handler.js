@@ -11,7 +11,7 @@ class VerificationsHandler {
 
     await this._service.deleteVerificationToken(userId, token);
 
-    return 'verified';
+    return 'verified and refresh your homepage to see your credits reward';
   }
 }
 

@@ -62,7 +62,10 @@ const init = async () => {
   );
   const authenticationsService = new AuthenticationsService();
   const creditsService = new CreditsService(usersService);
-  const verificationsService = new VerificationsService(usersService);
+  const verificationsService = new VerificationsService(
+    usersService,
+    creditsService
+  );
 
   const server = Hapi.server({
     port: config.app.port,

@@ -19,6 +19,7 @@ class ExportsHandler {
       credentialId,
       targetEmail
     );
+    await this._usersService.setToWaitingForVerify(credentialId);
 
     const message = {
       userId: credentialId,
@@ -28,6 +29,29 @@ class ExportsHandler {
 
     await this._producerService.sendMessage(
       'export:emailverifications',
+      JSON.stringify(message)
+    );
+
+    const response = h.response({
+      status: 'success',
+      message: 'Your request has been queued and will be process',
+    });
+
+    response.code(201);
+    return response;
+  }
+
+  async postExportForgotPasswordHandler(request, h) {
+    this._validator.validateExportUserEmailPayload(request.payload);
+
+    const { targetEmail } = request.payload;
+
+    const message = {
+      targetEmail,
+    };
+
+    await this._producerService.sendMessage(
+      'export:forgotpassword',
       JSON.stringify(message)
     );
 

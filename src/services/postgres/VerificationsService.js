@@ -3,9 +3,10 @@ const { Pool } = require('pg');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class VerificationsService {
-  constructor(usersService) {
+  constructor(usersService, creditsService) {
     this._pool = new Pool();
     this._usersService = usersService;
+    this._creditsService = creditsService;
   }
 
   async deleteVerificationToken(userId, token) {
@@ -18,6 +19,7 @@ class VerificationsService {
 
     await this._pool.query(query);
     await this._usersService.validatingUser(userId);
+    await this._creditsService.addBonusVerifiedUserCredit(userId);
   }
 
   async checkVerificationEmailAvailability(userId, token) {

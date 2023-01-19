@@ -151,8 +151,6 @@ class UsersService {
       throw new NotFoundError('Email not found');
     }
 
-    await this.setToWaitingForVerify(userId);
-
     return result.rows[0].trainer_name;
   }
 
@@ -287,6 +285,34 @@ class UsersService {
     }
 
     return result.rows;
+  }
+
+  async verifyOnlyEmailAvailability(email) {
+    const query = {
+      text: 'SELECT email FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Email not found');
+    }
+  }
+
+  async forgotPassword(email) {
+    await this.verifyOnlyEmailAvailability(email);
+    const newPassword = nanoid(8);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const query = {
+      text: 'UPDATE users SET password = $1 WHERE email = $2',
+      values: [hashedPassword, email],
+    };
+
+    await this._pool.query(query);
+
+    return newPassword;
   }
 }
 
