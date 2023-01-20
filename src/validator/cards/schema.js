@@ -65,6 +65,7 @@ const AddCardByOwnerSchema = Joi.object({
         min_hits: Joi.number().integer().allow(null).required(),
         min_turns: Joi.number().integer().allow(null).required(),
         stat_chance: Joi.number().integer().allow(null).required(),
+        target: Joi.string().required(),
         type: Joi.string().required(),
       }).required(),
       move2: Joi.object({
@@ -85,6 +86,7 @@ const AddCardByOwnerSchema = Joi.object({
         min_hits: Joi.number().integer().allow(null).required(),
         min_turns: Joi.number().integer().allow(null).required(),
         stat_chance: Joi.number().integer().allow(null).required(),
+        target: Joi.string().required(),
         type: Joi.string().required(),
       }).required(),
     })

@@ -46,6 +46,8 @@ class ExportsHandler {
 
     const { targetEmail } = request.payload;
 
+    await this._usersService.verifyOnlyEmailAvailability(targetEmail);
+
     const message = {
       targetEmail,
     };

@@ -3,7 +3,6 @@ const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
-const { query } = require('@hapi/hapi/lib/validation');
 
 class OffersService {
   constructor(cardsService, showcasesService, tradesService) {
