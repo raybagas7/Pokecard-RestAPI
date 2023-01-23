@@ -93,6 +93,29 @@ class UsersService {
     return result.rows[0];
   }
 
+  async verifyUserCredentialByToken(userId, password) {
+    const query = {
+      text: 'SELECT password FROM users WHERE id = $1',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new AuthenticationError(
+        'The credentials you provide are in correct'
+      );
+    }
+
+    const { password: hashedPassword } = result.rows[0];
+
+    const match = await bcrypt.compare(password, hashedPassword);
+
+    if (!match) {
+      throw new AuthenticationError('Wrong Password');
+    }
+  }
+
   async verifyUserCredential(username, password) {
     const query = {
       text: 'SELECT id, password FROM users WHERE username = $1',
@@ -116,6 +139,19 @@ class UsersService {
     }
 
     return id;
+  }
+
+  async paswordChange(ownerId, currentPassword, newPassword) {
+    await this.verifyUserCredentialByToken(ownerId, currentPassword);
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const query = {
+      text: 'UPDATE users SET password = $1 WHERE id = $2',
+      values: [hashedPassword, ownerId],
+    };
+
+    await this._pool.query(query);
   }
 
   async setUserToLoggedIn(userId) {
@@ -263,7 +299,7 @@ class UsersService {
 
   async getRandomUser(userId) {
     const query = {
-      text: `SELECT users.trainer_name, users.search_id,
+      text: `SELECT users.trainer_name, users.search_id, users.profile_img,
       COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'normal' THEN 1 ELSE null END) AS Normal,
       COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'shiny' THEN 1 ELSE null END) AS Shiny,
       COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'normal' THEN 1 ELSE null END) AS legendarymyth,
@@ -289,7 +325,7 @@ class UsersService {
 
   async verifyOnlyEmailAvailability(email) {
     const query = {
-      text: 'SELECT email FROM users WHERE email = $1',
+      text: 'SELECT email, is_valid FROM users WHERE email = $1',
       values: [email],
     };
 
@@ -297,6 +333,14 @@ class UsersService {
 
     if (!result.rowCount) {
       throw new NotFoundError('Email not found');
+    }
+
+    const isValid = result.rows[0];
+
+    if (isValid.is_valid === false) {
+      throw new AuthorizationError(
+        'You need to verify your email to request forgot password'
+      );
     }
   }
 

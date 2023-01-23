@@ -28,6 +28,14 @@ const routes = (handler) => [
       auth: 'pokecard_jwt',
     },
   },
+  {
+    method: 'PUT',
+    path: '/users/password/change',
+    handler: handler.changeUserPasswordHandler,
+    options: {
+      auth: 'pokecard_jwt',
+    },
+  },
 ];
 
 module.exports = routes;

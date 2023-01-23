@@ -11,4 +11,9 @@ const UserPayloadSchema = Joi.object({
   trainer_name: Joi.string().required(),
 });
 
-module.exports = UserPayloadSchema;
+const UserNewPasswordSchema = Joi.object({
+  currentPassword: Joi.string().min(8).required(),
+  newPassword: Joi.string().min(8).required(),
+});
+
+module.exports = { UserPayloadSchema, UserNewPasswordSchema };

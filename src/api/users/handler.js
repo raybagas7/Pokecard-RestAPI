@@ -61,6 +61,16 @@ class UsersHandler {
       data,
     };
   }
+
+  async changeUserPasswordHandler(request) {
+    this._validator.validateUserNewPasswordPayload(request.payload);
+    const { currentPassword, newPassword } = request.payload;
+    const { id: ownerId } = request.auth.credentials;
+
+    await this._service.paswordChange(ownerId, currentPassword, newPassword);
+
+    return { status: 'success', message: 'User password has changed' };
+  }
 }
 
 module.exports = UsersHandler;

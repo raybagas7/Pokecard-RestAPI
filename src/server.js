@@ -40,11 +40,17 @@ const ShuffledValidator = require('./validator/shuffled');
 const TradesService = require('./services/postgres/TradesService');
 const trades = require('./api/trades');
 const TradesValidator = require('./validator/trades');
+//offers API
 const OffersService = require('./services/postgres/OffersService');
 const offers = require('./api/offers');
 const OffersValidator = require('./validator/offers');
+//uploads API
+const uploads = require('./api/uploads');
+const StorageService = require('./services/S3/StorageService');
+const UploadsValidator = require('./validator/uploads');
 
 const init = async () => {
+  const storageService = new StorageService();
   const cardsService = new CardsService();
   const tradesService = new TradesService(cardsService);
   const showcasesService = new ShowcasesService(cardsService);
@@ -177,6 +183,13 @@ const init = async () => {
       options: {
         service: offersService,
         validator: OffersValidator,
+      },
+    },
+    {
+      plugin: uploads,
+      options: {
+        service: storageService,
+        validator: UploadsValidator,
       },
     },
   ]);
