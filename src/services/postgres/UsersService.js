@@ -18,8 +18,8 @@ class UsersService {
 
   async verifyNewUsername(username, email) {
     const query = {
-      text: 'SELECT username, email from users WHERE username = $1',
-      values: [username],
+      text: 'SELECT username, email from users WHERE username = $1 OR email = $2',
+      values: [username, email],
     };
 
     const result = await this._pool.query(query);
@@ -95,7 +95,7 @@ class UsersService {
 
   async verifyUserCredentialByToken(userId, password) {
     const query = {
-      text: 'SELECT password FROM users WHERE id = $1',
+      text: 'SELECT password FROM users WHERE id = $1 OR email',
       values: [userId],
     };
 
@@ -118,7 +118,7 @@ class UsersService {
 
   async verifyUserCredential(username, password) {
     const query = {
-      text: 'SELECT id, password FROM users WHERE username = $1',
+      text: 'SELECT id, password FROM users WHERE username = $1 ',
       values: [username],
     };
 

@@ -13,8 +13,21 @@ class OffersService {
   }
 
   async addAnOffer(offerer_cardId, trader_cardId, offererUserId) {
+    console.log(offerer_cardId, trader_cardId, offererUserId);
     await this.verifyOffererCardIdAvailability(offerer_cardId);
     await this.checkMaximumOffer(trader_cardId);
+
+    const tradeCardOwnerUserId = await this._cardsService.getCardOwner(
+      trader_cardId
+    );
+
+    if (
+      offerer_cardId === trader_cardId ||
+      tradeCardOwnerUserId === offererUserId
+    ) {
+      throw new InvariantError(`You can't make an offer to your own cards`);
+    }
+
     await this._showcasesService.checkUserShowcasesAvailability(
       offerer_cardId,
       offererUserId
@@ -23,17 +36,12 @@ class OffersService {
       offerer_cardId,
       offererUserId
     );
-
     await this._cardsService.verifyIdAndCardOwner(
       offerer_cardId,
       offererUserId
     );
 
     const offerId = `offer-${nanoid(16)}`;
-
-    if (offerer_cardId === trader_cardId) {
-      throw new InvariantError(`You can't make an offer to your own cards`);
-    }
 
     const query = {
       text: 'INSERT INTO offers VALUES($1, $2, $3, $4) RETURNING offer_id',

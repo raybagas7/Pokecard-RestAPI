@@ -112,6 +112,21 @@ class CardsService {
     }
   }
 
+  async getCardOwner(cardId) {
+    const query = {
+      text: 'SELECT owner FROM cards WHERE card_id = $1',
+      values: [cardId],
+    };
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Card not exist');
+    }
+    const card = result.rows[0];
+
+    return card.owner;
+  }
+
   async swapCardOwner(traderId, OffererId, traderCardId, offererCardId) {
     const query = {
       text: `UPDATE cards
