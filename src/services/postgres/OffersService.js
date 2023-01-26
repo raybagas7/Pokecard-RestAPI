@@ -13,7 +13,7 @@ class OffersService {
   }
 
   async addAnOffer(offerer_cardId, trader_cardId, offererUserId) {
-    console.log(offerer_cardId, trader_cardId, offererUserId);
+    // console.log(offerer_cardId, trader_cardId, offererUserId);
     await this.verifyOffererCardIdAvailability(offerer_cardId);
     await this.checkMaximumOffer(trader_cardId);
 

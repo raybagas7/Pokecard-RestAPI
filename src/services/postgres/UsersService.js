@@ -95,7 +95,7 @@ class UsersService {
 
   async verifyUserCredentialByToken(userId, password) {
     const query = {
-      text: 'SELECT password FROM users WHERE id = $1 OR email',
+      text: 'SELECT password FROM users WHERE id = $1',
       values: [userId],
     };
 
@@ -299,7 +299,7 @@ class UsersService {
 
   async getRandomUser(userId) {
     const query = {
-      text: `SELECT users.trainer_name, users.search_id, users.profile_img,
+      text: `SELECT users.trainer_name, users.search_id, users.profile_img, users.is_valid,
       COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'normal' THEN 1 ELSE null END) AS Normal,
       COUNT(CASE WHEN (legendary = false AND mythical = false) AND attribute = 'shiny' THEN 1 ELSE null END) AS Shiny,
       COUNT(CASE WHEN (legendary = true OR mythical = true) AND attribute = 'normal' THEN 1 ELSE null END) AS legendarymyth,
