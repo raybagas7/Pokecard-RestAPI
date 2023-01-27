@@ -28,8 +28,11 @@ exports.up = (pgm) => {
       type: 'TEXT',
     },
   });
+
+  pgm.createExtension('citext');
 };
 
 exports.down = (pgm) => {
   pgm.dropTable('users');
+  pgm.dropExtension('citext');
 };
