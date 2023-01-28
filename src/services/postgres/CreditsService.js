@@ -239,7 +239,7 @@ class CreditsService {
       text: `UPDATE credits SET poke_ball = poke_ball + 40,
       ultra_ball = ultra_ball + 1,
       master_ball = master_ball + 1,
-      coin = coin + 7000
+      coin = coin + 6000
       WHERE owner = $1`,
       values: [userId],
     };
