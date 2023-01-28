@@ -14,7 +14,7 @@ class CreditsService {
     const id = `credit-${nanoid(16)}`;
 
     const query = {
-      text: 'INSERT INTO credits VALUES($1, 10, 3, 2, 3000, $2) RETURNING credit_id',
+      text: 'INSERT INTO credits VALUES($1, 10, 3, 1, 3000, $2) RETURNING credit_id',
       values: [id, owner],
     };
 
@@ -236,10 +236,10 @@ class CreditsService {
 
   async addBonusVerifiedUserCredit(userId) {
     const query = {
-      text: `UPDATE credits SET poke_ball = poke_ball + 60,
-      ultra_ball = ultra_ball + 20,
-      master_ball = master_ball + 10,
-      coin = coin + 10000
+      text: `UPDATE credits SET poke_ball = poke_ball + 40,
+      ultra_ball = ultra_ball + 1,
+      master_ball = master_ball + 1,
+      coin = coin + 7000
       WHERE owner = $1`,
       values: [userId],
     };
