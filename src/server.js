@@ -76,11 +76,11 @@ const init = async () => {
   const server = Hapi.server({
     port: config.app.port,
     host: process.env.NODE_ENV !== 'production' ? config.app.host : '0.0.0.0',
-    routes: {
-      cors: {
-        origin: ['*'],
-      },
-    },
+    // routes: {
+    //   cors: {
+    //     origin: ['*'],
+    //   },
+    // },
   });
 
   // Tambah plugin eksternal
