@@ -5,20 +5,12 @@ const routes = (handler) => [
     handler: handler.postExportVerifyEmailHandler,
     options: {
       auth: 'pokecard_jwt',
-      cors: {
-        origin: ['*'],
-      },
     },
   },
   {
     method: 'POST',
     path: '/export/forgot/password',
     handler: handler.postExportForgotPasswordHandler,
-    options: {
-      cors: {
-        origin: ['*'],
-      },
-    },
   },
 ];
 

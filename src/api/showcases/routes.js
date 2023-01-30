@@ -5,9 +5,6 @@ const routes = (handler) => [
     handler: handler.updateCaseHandler,
     options: {
       auth: 'pokecard_jwt',
-      cors: {
-        origin: ['*'],
-      },
     },
   },
   {
@@ -16,9 +13,6 @@ const routes = (handler) => [
     handler: handler.getUserShowcasesHandler,
     options: {
       auth: 'pokecard_jwt',
-      cors: {
-        origin: ['*'],
-      },
     },
   },
 ];

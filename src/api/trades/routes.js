@@ -5,9 +5,6 @@ const routes = (handler) => [
     handler: handler.updateWindowHandler,
     options: {
       auth: 'pokecard_jwt',
-      cors: {
-        origin: ['*'],
-      },
     },
   },
   {
@@ -16,9 +13,6 @@ const routes = (handler) => [
     handler: handler.getUserTradesHandler,
     options: {
       auth: 'pokecard_jwt',
-      cors: {
-        origin: ['*'],
-      },
     },
   },
   {
@@ -27,9 +21,6 @@ const routes = (handler) => [
     handler: handler.removeCardFromTradesWindow,
     options: {
       auth: 'pokecard_jwt',
-      cors: {
-        origin: ['*'],
-      },
     },
   },
 ];

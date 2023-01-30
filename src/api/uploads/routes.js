@@ -11,9 +11,6 @@ const routes = (handler) => [
         multipart: true,
         output: 'stream',
       },
-      cors: {
-        origin: ['*'],
-      },
     },
   },
 ];

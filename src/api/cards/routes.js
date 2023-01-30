@@ -5,9 +5,6 @@ const routes = (handler) => [
     handler: handler.postCardByOwnerHandler,
     options: {
       auth: 'pokecard_jwt',
-      cors: {
-        origin: ['*'],
-      },
     },
   },
   {
@@ -16,9 +13,6 @@ const routes = (handler) => [
     handler: handler.getCardByOwnerHandler,
     options: {
       auth: 'pokecard_jwt',
-      cors: {
-        origin: ['*'],
-      },
     },
   },
   {
@@ -27,9 +21,6 @@ const routes = (handler) => [
     handler: handler.getCardByElementTypeHandler,
     options: {
       auth: 'pokecard_jwt',
-      cors: {
-        origin: ['*'],
-      },
     },
   },
 ];
