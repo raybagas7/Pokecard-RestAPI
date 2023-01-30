@@ -3,6 +3,11 @@ const routes = (handler) => [
     method: 'POST',
     path: '/users',
     handler: handler.postUserHandler,
+    options: {
+      cors: {
+        origin: ['*'],
+      },
+    },
   },
   {
     method: 'GET',
@@ -10,6 +15,9 @@ const routes = (handler) => [
     handler: handler.getRandomUser,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -18,6 +26,9 @@ const routes = (handler) => [
     handler: handler.getUserByIdHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -26,6 +37,9 @@ const routes = (handler) => [
     handler: handler.getUserInformationBySearchId,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -34,6 +48,9 @@ const routes = (handler) => [
     handler: handler.changeUserPasswordHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
 ];

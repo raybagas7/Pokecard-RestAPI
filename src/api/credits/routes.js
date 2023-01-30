@@ -5,6 +5,9 @@ const routes = (handler) => [
     handler: handler.postCreditHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -13,6 +16,9 @@ const routes = (handler) => [
     handler: handler.getCreditHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -21,6 +27,9 @@ const routes = (handler) => [
     handler: handler.getCreditAndTotalCardsHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -29,6 +38,9 @@ const routes = (handler) => [
     handler: handler.putReducePokeBallHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -37,6 +49,9 @@ const routes = (handler) => [
     handler: handler.putPokemonShuffleWithCoinHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -45,6 +60,9 @@ const routes = (handler) => [
     handler: handler.putCreditCoinHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -53,6 +71,9 @@ const routes = (handler) => [
     handler: handler.putCreditDailyClaimHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
 ];

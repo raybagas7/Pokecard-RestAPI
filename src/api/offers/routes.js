@@ -5,6 +5,9 @@ const routes = (handler) => [
     handler: handler.postOfferHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -13,6 +16,9 @@ const routes = (handler) => [
     handler: handler.deleteOfferHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -21,6 +27,9 @@ const routes = (handler) => [
     handler: handler.getAllOfferListUserHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -29,6 +38,9 @@ const routes = (handler) => [
     handler: handler.getOfferListTraderHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -37,6 +49,9 @@ const routes = (handler) => [
     handler: handler.acceptAnOfferHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
 ];

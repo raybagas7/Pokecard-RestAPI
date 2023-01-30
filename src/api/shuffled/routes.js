@@ -5,6 +5,9 @@ const routes = (handler) => [
     handler: handler.updateShuffledCardsHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
   {
@@ -13,6 +16,9 @@ const routes = (handler) => [
     handler: handler.getShuffledCardsHandler,
     options: {
       auth: 'pokecard_jwt',
+      cors: {
+        origin: ['*'],
+      },
     },
   },
 ];
