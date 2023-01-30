@@ -78,7 +78,7 @@ const init = async () => {
     host: process.env.NODE_ENV !== 'production' ? config.app.host : '0.0.0.0',
     routes: {
       cors: {
-        origin: ['https://www.pokemoncard.my.id'],
+        origin: ['https://www.pokemoncard.my.id', 'https://pokemoncard.my.id'],
       },
     },
   });
