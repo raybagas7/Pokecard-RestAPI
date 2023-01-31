@@ -10,6 +10,7 @@ class VerificationsService {
   }
 
   async deleteVerificationToken(userId, token) {
+    await this.checkUserValidity(userId);
     await this.checkVerificationEmailAvailability(userId, token);
 
     const query = {
@@ -20,6 +21,25 @@ class VerificationsService {
     await this._pool.query(query);
     await this._usersService.validatingUser(userId);
     await this._creditsService.addBonusVerifiedUserCredit(userId);
+  }
+
+  async checkUserValidity(userId) {
+    const query = {
+      text: 'SELECT is_valid FROM users WHERE id = $1',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('user not found');
+    }
+
+    const verif = result.rows[0];
+
+    if (verif.is_valid === true) {
+      throw new AuthorizationError('You already verified!');
+    }
   }
 
   async checkVerificationEmailAvailability(userId, token) {
