@@ -10,8 +10,8 @@ class VerificationsService {
   }
 
   async deleteVerificationToken(userId, token) {
-    await this.checkUserValidity(userId);
     await this.checkVerificationEmailAvailability(userId, token);
+    await this.checkUserValidity(userId);
 
     const query = {
       text: 'DELETE FROM verifications WHERE owner = $1 AND token = $2',
