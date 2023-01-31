@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { Pool } = require('pg');
+const AuthorizationError = require('../../exceptions/AuthorizationError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class VerificationsService {
