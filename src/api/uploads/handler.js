@@ -10,8 +10,6 @@ class UploadsHandler {
 
   async postUploadPPHandler(request, h) {
     const { profileImg } = request.payload;
-    // console.log(profileImg);
-    // const { id } = request.params;
     const { id: ownerId } = request.auth.credentials;
     this._validator.validateImageHeaders(profileImg.hapi.headers);
 
@@ -20,6 +18,7 @@ class UploadsHandler {
       profileImg.hapi,
       ownerId
     );
+
     await this._service.addPPtoUser(ownerId, filename);
 
     const response = h.response({

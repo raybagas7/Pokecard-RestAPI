@@ -46,7 +46,7 @@ const offers = require('./api/offers');
 const OffersValidator = require('./validator/offers');
 //uploads API
 const uploads = require('./api/uploads');
-const StorageService = require('./services/S3/StorageService');
+const StorageService = require('./services/firebase/StorageService');
 const UploadsValidator = require('./validator/uploads');
 
 const init = async () => {
@@ -78,7 +78,10 @@ const init = async () => {
     host: process.env.NODE_ENV !== 'production' ? config.app.host : '0.0.0.0',
     routes: {
       cors: {
-        origin: ['https://www.pokemoncard.my.id'],
+        origin:
+          process.env.NODE_ENV !== 'production'
+            ? ['*']
+            : ['https://www.pokemoncard.my.id'],
       },
     },
   });

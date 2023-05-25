@@ -1,6 +1,5 @@
 const AWS = require('aws-sdk');
 const { Pool } = require('pg');
-const NotFoundError = require('../../exceptions/NotFoundError');
 const config = require('../../utils/config');
 
 class StorageService {
